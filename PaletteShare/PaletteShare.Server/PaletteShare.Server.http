@@ -1,0 +1,6 @@
+@PaletteShare.Server_HostAddress = http://localhost:5177
+
+GET {{PaletteShare.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
