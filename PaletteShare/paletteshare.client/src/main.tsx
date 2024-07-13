@@ -6,17 +6,13 @@ import "@mantine/core/styles.css";
 
 import { createTheme, MantineProvider } from "@mantine/core";
 
-const lightTheme = createTheme({
-  fontFamily: "Open Sans, sans-serif",
-});
-
-const darkTheme = createTheme({
-  fontFamily: "Open Sans, sans-serif",
+const theme = createTheme({
+  fontFamily: "Verdana, sans-serif",
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <MantineProvider theme={lightTheme}>
+    <MantineProvider theme={theme}>
       <App />
     </MantineProvider>
   </React.StrictMode>
