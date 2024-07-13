@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "./Navbar.module.css";
 import { NavLablesEnum } from "../../utils/enums";
+import { useLocation, Link } from "react-router-dom";
 
 const data = [
   { link: "/", label: NavLablesEnum.GALLERY, icon: IconHome },
@@ -23,27 +24,41 @@ const data = [
   { link: "/discover", label: NavLablesEnum.DISCOVER, icon: IconSearch },
 ];
 
+const getInitialActiveLabel = (pathname: string) => {
+  switch (pathname) {
+    case "/create":
+      return NavLablesEnum.CREATE;
+    case "/discover":
+      return NavLablesEnum.DISCOVER;
+    case "/profile":
+      return NavLablesEnum.PROFILE;
+    case "/":
+    default:
+      return NavLablesEnum.GALLERY;
+  }
+};
+
 export function Navbar() {
-  const [active, setActive] = useState(NavLablesEnum.GALLERY);
+  const location = useLocation();
+  const [active, setActive] = useState(
+    getInitialActiveLabel(location.pathname)
+  );
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
   });
 
   const links = data.map((item) => (
-    <a
+    <Link
       className={classes.link}
       data-active={item.label === active || undefined}
-      href={item.link}
+      to={item.link}
       key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(item.label);
-      }}
+      onClick={() => setActive(item.label)}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
-    </a>
+    </Link>
   ));
 
   return (

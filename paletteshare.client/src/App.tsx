@@ -4,28 +4,21 @@ import { Profile } from "./pages/Profile";
 import { Discover } from "./pages/Discover";
 import { Create } from "./pages/Create";
 import classes from "./App.module.scss";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<Gallery />}>
-      <Route path="create" element={<Create />} />
-      <Route path="discover" element={<Discover />} />
-      <Route path="profile" element={<Profile />} />
-    </Route>
-  )
-);
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <div className={classes.app}>
-      <Navbar />
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <Navbar />
+
+        <Routes>
+          <Route path="/" element={<Gallery />} />
+          <Route path="create" element={<Create />} />
+          <Route path="discover" element={<Discover />} />
+          <Route path="profile" element={<Profile />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
