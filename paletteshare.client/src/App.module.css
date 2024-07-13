@@ -4,4 +4,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: row;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+  }
 }

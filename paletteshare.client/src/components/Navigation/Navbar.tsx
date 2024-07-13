@@ -5,6 +5,7 @@ import {
   ActionIcon,
   useMantineColorScheme,
   useComputedColorScheme,
+  Box,
 } from "@mantine/core";
 import {
   IconLogout,
@@ -17,6 +18,7 @@ import {
 import classes from "./Navbar.module.css";
 import { NavLablesEnum } from "../../utils/enums";
 import { useLocation, Link } from "react-router-dom";
+import { Header } from "./Header";
 
 const data = [
   { link: "/", label: NavLablesEnum.GALLERY, icon: IconHome },
@@ -24,7 +26,7 @@ const data = [
   { link: "/discover", label: NavLablesEnum.DISCOVER, icon: IconSearch },
 ];
 
-const getInitialActiveLabel = (pathname: string) => {
+export const getInitialActiveLabel = (pathname: string) => {
   switch (pathname) {
     case "/create":
       return NavLablesEnum.CREATE;
@@ -40,7 +42,7 @@ const getInitialActiveLabel = (pathname: string) => {
 
 export function Navbar() {
   const location = useLocation();
-  const [active, setActive] = useState(
+  const [active, setActive] = useState<string>(
     getInitialActiveLabel(location.pathname)
   );
   const { setColorScheme } = useMantineColorScheme();
@@ -62,35 +64,50 @@ export function Navbar() {
   ));
 
   return (
-    <nav className={classes.navbar}>
-      <div className={classes.navbarMain}>
-        <Group className={classes.header} justify="space-between">
-          PalletteShare
-          <ActionIcon
-            onClick={() =>
-              setColorScheme(computedColorScheme === "light" ? "dark" : "light")
-            }
-            variant="default"
-            size="xl"
-            aria-label="Toggle color scheme"
-          >
-            <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
-            <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
-          </ActionIcon>
-        </Group>
-        {links}
-      </div>
+    <>
+      <Box visibleFrom="sm">
+        <nav className={classes.navbar}>
+          <div className={classes.navbarMain}>
+            <Group className={classes.header} justify="space-between">
+              PalletteShare
+              <ActionIcon
+                onClick={() =>
+                  setColorScheme(
+                    computedColorScheme === "light" ? "dark" : "light"
+                  )
+                }
+                variant="default"
+                size="xl"
+                aria-label="Toggle color scheme"
+              >
+                <IconSun
+                  className={cx(classes.icon, classes.light)}
+                  stroke={1.5}
+                />
+                <IconMoon
+                  className={cx(classes.icon, classes.dark)}
+                  stroke={1.5}
+                />
+              </ActionIcon>
+            </Group>
+            {links}
+          </div>
 
-      <div className={classes.footer}>
-        <a
-          href="#"
-          className={classes.link}
-          onClick={(event) => event.preventDefault()}
-        >
-          <IconLogout className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
-        </a>
-      </div>
-    </nav>
+          <div className={classes.footer}>
+            <a
+              href="#"
+              className={classes.link}
+              onClick={(event) => event.preventDefault()}
+            >
+              <IconLogout className={classes.linkIcon} stroke={1.5} />
+              <span>Logout</span>
+            </a>
+          </div>
+        </nav>
+      </Box>
+      <Box hiddenFrom="sm">
+        <Header active={active} setActive={setActive} />
+      </Box>
+    </>
   );
 }
