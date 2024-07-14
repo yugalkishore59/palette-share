@@ -9,3 +9,12 @@
     flex-direction: column;
   }
 }
+
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.scrollArea {
+  height: 100%;
+}
