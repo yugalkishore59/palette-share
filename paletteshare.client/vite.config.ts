@@ -46,6 +46,13 @@ const target = env.ASPNETCORE_HTTPS_PORT
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [plugin()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "./src/_mantine";`,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
