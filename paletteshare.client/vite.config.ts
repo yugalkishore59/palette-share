@@ -60,7 +60,23 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "^/weatherforecast": {
+      "^/api/posts/getallposts": {
+        target,
+        secure: false,
+      },
+      "^/api/posts/createpost": {
+        target,
+        secure: false,
+      },
+      "^/api/posts/getpost": {
+        target,
+        secure: false,
+      },
+      "^/api/posts/updatepost": {
+        target,
+        secure: false,
+      },
+      "^/api/posts/deletepost": {
         target,
         secure: false,
       },

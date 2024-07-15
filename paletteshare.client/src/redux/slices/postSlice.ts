@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { PostProps, PostsProps } from "../../utils/interfaces"; // Adjust path as necessary
+import { PostType, PostsType } from "../../utils/interfaces"; // Adjust path as necessary
 
-const initialState: PostsProps = {
+const initialState: PostsType = {
   posts: [],
   page: 1,
   loading: false,
@@ -11,7 +11,7 @@ const initialState: PostsProps = {
 export const fetchPostsFromAPI = async (page: number) => {
   // const response = await fetch(`/weatherforecast`);
   // const data = await response.json();
-  const data: PostProps[] = [
+  const data: PostType[] = [
     {
       _id: "123",
       description: "test description",
@@ -59,7 +59,7 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       fetchPosts.fulfilled,
-      (state, action: PayloadAction<PostProps[]>) => {
+      (state, action: PayloadAction<PostType[]>) => {
         state.posts = [...state.posts, ...action.payload];
         state.loading = false;
         state.error = false;
