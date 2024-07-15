@@ -29,7 +29,7 @@ const images = [
 
 export function Create() {
   return (
-    <Container size="md" p="xs">
+    <Container size="lg" p="xs">
       <Fieldset legend="Create new post" variant="filled">
         {/* <TextInput label="Your name" placeholder="Your name" />
         <TextInput label="Email" placeholder="Email" mt="md" /> */}

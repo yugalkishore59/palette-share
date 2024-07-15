@@ -55,4 +55,15 @@ interface PostsType {
   error: boolean;
 }
 
-export type { HeaderProps, UserType, PostType, PostsType, CommentType };
+interface PostProps {
+  post: PostType;
+}
+
+export type {
+  HeaderProps,
+  UserType,
+  PostType,
+  PostsType,
+  CommentType,
+  PostProps,
+};
