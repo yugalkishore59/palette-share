@@ -3,7 +3,7 @@ interface HeaderProps {
   setActive: (active: string) => void;
 }
 
-interface UserProps {
+interface UserType {
   _id: string;
   name: string;
   username: string;
@@ -25,33 +25,34 @@ interface UserProps {
   posts: string[];
 }
 
-interface CommentProps {
+interface CommentType {
+  _id: string;
   userId: string;
   username: string;
-  comment: string;
+  content: string;
   createdAt: string;
 }
 
-interface PostProps {
+interface PostType {
   _id: string;
   description: string;
-  artistId: string;
-  name: string;
-  username: string;
+  userId: string;
+  name: string; // name of the user
+  username: string; // unique username of the user
   imageUrl: string;
   tags: string[];
   createdAt: string;
   updatedAt: string;
   likes: number;
-  comments: CommentProps[];
+  comments: CommentType[];
   license: string;
 }
 
-interface PostsProps {
-  posts: PostProps[];
+interface PostsType {
+  posts: PostType[];
   page: number;
   loading: boolean;
   error: boolean;
 }
 
-export type { HeaderProps, UserProps, PostProps, PostsProps, CommentProps };
+export type { HeaderProps, UserType, PostType, PostsType, CommentType };
