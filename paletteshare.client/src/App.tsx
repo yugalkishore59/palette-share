@@ -13,19 +13,13 @@ function App() {
       <BrowserRouter>
         <Navbar />
 
-        <Container className={classes.container}>
-          {/* <ScrollArea
-            offsetScrollbars
-            scrollHideDelay={500}
-            className={classes.scrollArea}
-          > */}
+        <Container fluid className={classes.container}>
           <Routes>
             <Route path="/" element={<Gallery />} />
             <Route path="create" element={<Create />} />
             <Route path="discover" element={<Discover />} />
             <Route path="profile" element={<Profile />} />
           </Routes>
-          {/* </ScrollArea> */}
         </Container>
       </BrowserRouter>
     </div>
