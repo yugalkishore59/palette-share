@@ -5,17 +5,23 @@ import { Discover } from "./pages/Discover";
 import { Create } from "./pages/Create/Create";
 import classes from "./App.module.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Container, ScrollArea } from "@mantine/core";
+import { Container } from "@mantine/core";
+import { useRef } from "react";
 
 function App() {
+  const scrollableRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className={classes.app}>
       <BrowserRouter>
         <Navbar />
 
-        <Container fluid className={classes.container}>
+        <Container fluid className={classes.container} ref={scrollableRef}>
           <Routes>
-            <Route path="/" element={<Gallery />} />
+            <Route
+              path="/"
+              element={<Gallery scrollableRef={scrollableRef} />}
+            />
             <Route path="create" element={<Create />} />
             <Route path="discover" element={<Discover />} />
             <Route path="profile" element={<Profile />} />

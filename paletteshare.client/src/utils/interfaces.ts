@@ -1,9 +1,13 @@
-interface HeaderProps {
+export interface HeaderProps {
   active: string;
   setActive: (active: string) => void;
 }
 
-interface UserType {
+export interface GalleryProps {
+  scrollableRef: React.RefObject<HTMLDivElement>;
+}
+
+export interface UserType {
   _id: string;
   name: string;
   username: string;
@@ -25,7 +29,7 @@ interface UserType {
   posts: string[];
 }
 
-interface CommentType {
+export interface CommentType {
   _id: string;
   userId: string;
   username: string;
@@ -33,7 +37,7 @@ interface CommentType {
   createdAt: string;
 }
 
-interface PostType {
+export interface PostType {
   _id: string;
   description: string;
   userId: string;
@@ -48,22 +52,13 @@ interface PostType {
   license: string;
 }
 
-interface PostsType {
+export interface PostsType {
   posts: PostType[];
   page: number;
   loading: boolean;
   error: boolean;
 }
 
-interface PostProps {
+export interface PostProps {
   post: PostType;
 }
-
-export type {
-  HeaderProps,
-  UserType,
-  PostType,
-  PostsType,
-  CommentType,
-  PostProps,
-};

@@ -13,7 +13,13 @@ namespace PaletteShare.Server.Services
             _posts = database.GetCollection<Post>(settings.Value.PostCollectionName);
         }
 
-        public async Task<List<Post>> GetPostsAsync() => await _posts.Find(post => true).ToListAsync();
+        public async Task<List<Post>> GetPostsAsync(int page, int pageSize)
+        {
+            return await _posts.Find(post => true)
+                               .Skip((page-1) * pageSize)
+                               .Limit(pageSize)
+                               .ToListAsync();
+        }
 
         public async Task<Post> GetPostAsync(string id) => await _posts.Find<Post>(post => post.Id == id).FirstOrDefaultAsync();
 

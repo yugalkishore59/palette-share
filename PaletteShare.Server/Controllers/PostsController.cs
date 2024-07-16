@@ -15,17 +15,16 @@ namespace PaletteShare.Server.Controllers
             _postService = postService;
         }
 
-        [HttpGet("getallposts")]
-        public async Task<ActionResult<List<Post>>> GetAllPosts()
+        [HttpGet("getposts")]
+        public async Task<ActionResult<List<Post>>> GetPosts(int page = 1, int pageSize = 10)
         {
             try
             {
-                var posts = await _postService.GetPostsAsync();
+                var posts = await _postService.GetPostsAsync(page, pageSize);
                 return Ok(posts);
             }
             catch (Exception ex)
             {
-                // Handle any exceptions and return a 500 Internal Server Error response
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
