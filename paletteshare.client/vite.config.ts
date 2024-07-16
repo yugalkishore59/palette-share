@@ -60,7 +60,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "^/api/posts/getallposts": {
+      "^/api/posts/getposts": {
         target,
         secure: false,
       },

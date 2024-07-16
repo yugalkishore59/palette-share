@@ -1,9 +1,16 @@
 import axios from "axios";
 import { PostType } from "./interfaces";
+import { POSTS_IN_ONE_PAGE } from "./constants";
 
-export const getAllPosts = async () => {
+export const getPosts = async (
+  page: number,
+  pageSize: number = POSTS_IN_ONE_PAGE
+) => {
   try {
-    const response = await axios.get("/api/posts/getallposts");
+    const response = await axios.get(
+      `/api/posts/getposts?page=${page}&pageSize=${pageSize}`
+    );
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching posts:", error);
