@@ -10,7 +10,6 @@ export const getPosts = async (
     const response = await axios.get(
       `/api/posts/getposts?page=${page}&pageSize=${pageSize}`
     );
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching posts:", error);

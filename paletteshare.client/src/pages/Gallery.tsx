@@ -1,50 +1,45 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { useEffect, useRef, useState } from "react";
-import { incrementPage, resetPosts } from "../redux/slices/postSlice";
+import { incrementPageSlice, resetPostsSlice } from "../redux/slices/postSlice";
 import { fetchPosts } from "../redux/slices/postSlice";
 import { Button, Container, ScrollArea, Stack } from "@mantine/core";
 
-import {
-  getPosts,
-  createPost,
-  getPostById,
-  updatePost,
-  deletePost,
-} from "../utils/api";
-import { PostType } from "../utils/interfaces";
 import { PostCard } from "../components/Post/PostCard";
 import { SCROLL_THRESHOLD } from "../utils/constants";
 import { GalleryProps } from "../utils/interfaces";
 
 export const Gallery = ({ scrollableRef }: GalleryProps) => {
   const dispatch = useDispatch();
-  const { posts, page, loading, error } = useSelector(
+  const { posts, page, loading, isLastPost, error } = useSelector(
     (state: RootState) => state.posts
   );
   const [flag, setFlag] = useState(false);
 
+  const pageRef = useRef<number>(page); // Create a ref for page
+  const isLastPostRef = useRef<boolean>(isLastPost); // Create a ref for page
+
   // fetch posts when component mounts
   useEffect(() => {
-    dispatch(fetchPosts(1));
+    if (posts.length === 0) dispatch(fetchPosts(1));
   }, []);
-  const pageRef = useRef<number>(page); // Create a ref for page
 
   useEffect(() => {
     pageRef.current = page; // Update pageRef whenever page changes
-  }, [page]);
+    isLastPostRef.current = isLastPost;
+  }, [page, isLastPost]);
 
   // load more posts when user reaches viewport height + threshold
   useEffect(() => {
     const loadMorePosts = () => {
       if (!loading) {
         dispatch(fetchPosts(pageRef.current + 1));
-        dispatch(incrementPage());
+        dispatch(incrementPageSlice());
         setFlag(false);
       }
     };
     const handleScroll = () => {
-      if (!scrollableRef.current) return;
+      if (!scrollableRef.current || isLastPostRef.current) return;
       const { scrollHeight, scrollTop, clientHeight } = scrollableRef.current;
       const isNearBottom =
         scrollHeight - scrollTop <= clientHeight + SCROLL_THRESHOLD;

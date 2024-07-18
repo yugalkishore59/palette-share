@@ -11,11 +11,24 @@ import {
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import classes from "./DropzoneButton.module.css";
+import { DropzoneButtonProps } from "../../utils/interfaces";
 
-export function DropzoneButton() {
+export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
   const theme = useMantineTheme();
   const openRef = useRef<() => void>(null);
   const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const handleFileChange = (files: FileWithPath[]) => {
+    setFiles(files);
+    const file = files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setImageUrlBase64(reader.result as string);
+      };
+    }
+  };
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -33,7 +46,7 @@ export function DropzoneButton() {
       <div className={classes.wrapper}>
         <Dropzone
           openRef={openRef}
-          onDrop={setFiles}
+          onDrop={handleFileChange}
           className={classes.dropzone}
           radius="md"
           accept={IMAGE_MIME_TYPE}

@@ -30,9 +30,14 @@ import {
 
 import { PostProps } from "../../utils/interfaces";
 import { useFullscreen } from "@mantine/hooks";
+import { deletePost } from "../../utils/api";
+import { useDispatch } from "react-redux";
+import { deletePostSlice } from "../../redux/slices/postSlice";
 
 export function PostCard({ post }: PostProps) {
+  const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
+
   const formatUpdatedAt = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
@@ -64,6 +69,16 @@ export function PostCard({ post }: PostProps) {
     return date.toLocaleDateString(); // Default format: MM/DD/YYYY
   };
 
+  const handleDelete = () => {
+    if (post.id) {
+      deletePost(post.id);
+      dispatch(deletePostSlice(post.id));
+      console.log("Post deleted successfully");
+    } else {
+      console.log("Post not found");
+    }
+  };
+
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section withBorder inheritPadding py="xs">
@@ -80,7 +95,7 @@ export function PostCard({ post }: PostProps) {
               </Text>
 
               <Text c="dimmed" size="xs">
-                {post.username} • {formatUpdatedAt(post.updatedAt)}
+                {post.username} • {formatUpdatedAt(post.updatedAt || "")}
               </Text>
             </div>
           </Group>
@@ -104,6 +119,7 @@ export function PostCard({ post }: PostProps) {
                   <IconTrash style={{ width: rem(14), height: rem(14) }} />
                 }
                 color="red"
+                onClick={handleDelete}
               >
                 Delete
               </Menu.Item>
