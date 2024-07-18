@@ -5,6 +5,7 @@ import { getPosts } from "../../utils/api";
 const initialState: PostsType = {
   posts: [],
   page: 1,
+  isLastPost: false,
   loading: false,
   error: false,
 };
@@ -22,12 +23,23 @@ const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    incrementPage(state) {
+    incrementPageSlice(state) {
       state.page += 1;
     },
-    resetPosts(state) {
+    resetPostsSlice(state) {
       state.posts = [];
       state.page = 1;
+    },
+    deletePostSlice(state, action: PayloadAction<string>) {
+      state.posts = state.posts.filter((post) => post.id !== action.payload);
+    },
+    updatePost(state, action: PayloadAction<PostType>) {
+      state.posts = state.posts.map((post) => {
+        if (post.id === action.payload.id) {
+          return action.payload;
+        }
+        return post;
+      });
     },
   },
   extraReducers: (builder) => {
@@ -38,6 +50,12 @@ const postsSlice = createSlice({
     builder.addCase(
       fetchPosts.fulfilled,
       (state, action: PayloadAction<PostType[]>) => {
+        if (action.payload.length === 0) {
+          state.isLastPost = true;
+          state.loading = false;
+          state.error = false;
+          return;
+        }
         if (state.page === 1) {
           state.posts = action.payload; // Set posts for initial load
         } else {
@@ -54,5 +72,10 @@ const postsSlice = createSlice({
   },
 });
 
-export const { incrementPage, resetPosts } = postsSlice.actions;
+export const {
+  incrementPageSlice,
+  resetPostsSlice,
+  deletePostSlice,
+  updatePost,
+} = postsSlice.actions;
 export default postsSlice.reducer;
