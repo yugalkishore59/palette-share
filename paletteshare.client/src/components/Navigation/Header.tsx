@@ -46,7 +46,7 @@ export function Header({ active, setActive }: HeaderProps) {
     getInitialValueInEffect: true,
   });
 
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const links = data.map((item) => (
     <Tooltip
@@ -158,7 +158,14 @@ export function Header({ active, setActive }: HeaderProps) {
               </Menu.Dropdown>
             </Menu>
           ) : (
-            <Button onClick={() => setUserLoggedIn(true)}>Log in</Button>
+            <Button
+              variant="outline"
+              loading={false}
+              loaderProps={{ type: "dots" }}
+              // w={"100%"}
+            >
+              Sign In
+            </Button>
           )}
         </Group>
       </Group>
