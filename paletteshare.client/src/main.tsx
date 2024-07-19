@@ -7,6 +7,7 @@ import "@mantine/carousel/styles.css";
 import "@mantine/dropzone/styles.css";
 import { store } from "./redux/store.ts";
 import { Provider } from "react-redux";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 import { createTheme, MantineProvider } from "@mantine/core";
 
@@ -18,7 +19,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
       <Provider store={store}>
-        <App />
+        <Auth0Provider
+          domain="dev-tw601j6u4tdr2rwq.us.auth0.com"
+          clientId="Xlc8QL3XS3S9JILaJYCiScEJgRh0gNEU"
+          authorizationParams={{
+            redirect_uri: "https://localhost:5173",
+          }}
+        >
+          <App />
+        </Auth0Provider>
       </Provider>
     </MantineProvider>
   </React.StrictMode>

@@ -6,6 +6,7 @@ import {
   useMantineColorScheme,
   useComputedColorScheme,
   Box,
+  Button,
 } from "@mantine/core";
 import {
   IconLogout,
@@ -19,6 +20,7 @@ import classes from "./Navbar.module.css";
 import { NavLablesEnum } from "../../utils/enums";
 import { useLocation, Link } from "react-router-dom";
 import { Header } from "./Header";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const data = [
   { link: "/", label: NavLablesEnum.GALLERY, icon: IconHome },
@@ -49,6 +51,8 @@ export function Navbar() {
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
   });
+  const { logout, user, isLoading, loginWithRedirect, isAuthenticated } =
+    useAuth0();
 
   const links = data.map((item) => (
     <Link
@@ -94,14 +98,29 @@ export function Navbar() {
           </div>
 
           <div className={classes.footer}>
-            <a
-              href="#"
-              className={classes.link}
-              onClick={(event) => event.preventDefault()}
-            >
-              <IconLogout className={classes.linkIcon} stroke={1.5} />
-              <span>Logout</span>
-            </a>
+            {isAuthenticated ? (
+              <a
+                href="#"
+                className={classes.link}
+                // onClick={(event) => event.preventDefault()}
+                onClick={() =>
+                  logout({ logoutParams: { returnTo: window.location.origin } })
+                }
+              >
+                <IconLogout className={classes.linkIcon} stroke={1.5} />
+                <span>Logout</span>
+              </a>
+            ) : (
+              <Button
+                variant="outline"
+                loading={isLoading}
+                loaderProps={{ type: "dots" }}
+                w={"100%"}
+                onClick={() => loginWithRedirect()}
+              >
+                Sign In
+              </Button>
+            )}
           </div>
         </nav>
       </Box>
