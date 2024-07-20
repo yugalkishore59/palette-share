@@ -13,9 +13,17 @@ const initialState: PostsType = {
 // Async thunk for fetching posts
 export const fetchPosts: any = createAsyncThunk(
   "posts/fetchPosts",
-  async (page: number) => {
-    const data = await getPosts(page);
-    return data;
+  async (page: number, { rejectWithValue }) => {
+    try {
+      const data = await getPosts(page);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue("An unknown error occurred");
+      }
+    }
   }
 );
 
