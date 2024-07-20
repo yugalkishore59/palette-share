@@ -33,10 +33,12 @@ import { useFullscreen } from "@mantine/hooks";
 import { deletePost } from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { deletePostSlice } from "../../redux/slices/postSlice";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export function PostCard({ post }: PostProps) {
   const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
+  const { isAuthenticated, getIdTokenClaims } = useAuth0();
 
   const formatUpdatedAt = (dateString: string): string => {
     const date = new Date(dateString);
@@ -69,13 +71,17 @@ export function PostCard({ post }: PostProps) {
     return date.toLocaleDateString(); // Default format: MM/DD/YYYY
   };
 
-  const handleDelete = () => {
-    if (post.id) {
-      deletePost(post.id);
-      dispatch(deletePostSlice(post.id));
-      console.log("Post deleted successfully");
-    } else {
-      console.log("Post not found");
+  const handleDelete = async () => {
+    if (isAuthenticated && post.id) {
+      try {
+        const idTokenClaims = await getIdTokenClaims();
+        const idToken = idTokenClaims?.__raw ?? "";
+
+        deletePost(post.id, idToken);
+        dispatch(deletePostSlice(post.id));
+      } catch (error) {
+        console.error("Error fetching token:", error);
+      }
     }
   };
 

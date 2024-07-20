@@ -27,9 +27,13 @@ export const getPostById = async (postId: string) => {
   }
 };
 
-export const createPost = async (postData: PostType) => {
+export const createPost = async (postData: PostType, token: string) => {
   try {
-    const response = await axios.post("/api/posts/createpost", postData);
+    const response = await axios.post("/api/posts/createpost", postData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error creating post:", error);
@@ -37,11 +41,20 @@ export const createPost = async (postData: PostType) => {
   }
 };
 
-export const updatePost = async (postId: string, updatedPostData: PostType) => {
+export const updatePost = async (
+  postId: string,
+  updatedPostData: PostType,
+  token: string
+) => {
   try {
     const response = await axios.put(
       `/api/posts/updatepost/${postId}`,
-      updatedPostData
+      updatedPostData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -50,9 +63,13 @@ export const updatePost = async (postId: string, updatedPostData: PostType) => {
   }
 };
 
-export const deletePost = async (postId: string) => {
+export const deletePost = async (postId: string, token: string) => {
   try {
-    const response = await axios.delete(`/api/posts/deletepost/${postId}`);
+    const response = await axios.delete(`/api/posts/deletepost/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error(`Error deleting post ${postId}:`, error);

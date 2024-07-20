@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PaletteShare.Server.Models;
 using PaletteShare.Server.Services;
 
@@ -30,6 +31,7 @@ namespace PaletteShare.Server.Controllers
         }
 
         [HttpPost("createpost")]
+        [Authorize]
         public async Task<ActionResult<Post>> CreatePost(Post post)
         {
             try
@@ -61,6 +63,7 @@ namespace PaletteShare.Server.Controllers
         }
 
         [HttpPut("updatepost/{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdatePost(string id, Post updatedPost)
         {
             var existingPost = await _postService.GetPostAsync(id);
@@ -89,6 +92,7 @@ namespace PaletteShare.Server.Controllers
         }
 
         [HttpDelete("deletepost/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePost(string id)
         {
             var existingPost = await _postService.GetPostAsync(id);

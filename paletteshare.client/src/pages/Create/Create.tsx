@@ -33,46 +33,40 @@ const images = [
 ];
 
 export function Create() {
-  const { isAuthenticated, getAccessTokenSilently, getIdTokenClaims } =
-    useAuth0();
-  useEffect(() => {
-    const fetchToken = async () => {
-      if (isAuthenticated) {
-        try {
-          const token = await getIdTokenClaims();
-          console.log(token);
-        } catch (error) {
-          console.error("Error fetching token:", error);
-        }
-      }
-    };
-
-    fetchToken();
-  }, [isAuthenticated, getAccessTokenSilently]);
+  const { isAuthenticated, getIdTokenClaims } = useAuth0();
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [license, setLicense] = useState<string>("None");
   const [imageUrlBase64, setImageUrlBase64] = useState<string>();
 
-  const handleSubmit = () => {
-    const post: PostType = {
-      description: description,
-      userId: "1",
-      name: "John Doe",
-      username: "johndoe",
-      imageUrl: imageUrlBase64,
-      tags: tags,
-      likes: 0,
-      comments: [],
-      license: license,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    createPost(post);
-    setDescription("");
-    setTags([]);
-    setLicense("None");
-    window.alert("submitted");
+  const handleSubmit = async () => {
+    if (isAuthenticated) {
+      try {
+        const idTokenClaims = await getIdTokenClaims();
+        const idToken = idTokenClaims?.__raw ?? "";
+
+        const post: PostType = {
+          description: description,
+          userId: "1",
+          name: "John Doe",
+          username: "johndoe",
+          imageUrl: imageUrlBase64,
+          tags: tags,
+          likes: 0,
+          comments: [],
+          license: license,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        createPost(post, idToken);
+        setDescription("");
+        setTags([]);
+        setLicense("None");
+        window.alert("submitted");
+      } catch (error) {
+        console.error("Error fetching token:", error);
+      }
+    }
   };
 
   return (
