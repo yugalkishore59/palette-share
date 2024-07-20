@@ -20,9 +20,11 @@ import { Carousel } from "@mantine/carousel";
 import classes from "./Create.module.css";
 import { IconDots, IconEye, IconFileZip, IconTrash } from "@tabler/icons-react";
 import { DropzoneButton } from "./DropzoneButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPost } from "../../utils/api";
 import { PostType } from "../../utils/interfaces";
+import { useAuth0 } from "@auth0/auth0-react";
+import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
 
 const images = [
   "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png",
@@ -31,6 +33,22 @@ const images = [
 ];
 
 export function Create() {
+  const { isAuthenticated, getAccessTokenSilently, getIdTokenClaims } =
+    useAuth0();
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (isAuthenticated) {
+        try {
+          const token = await getIdTokenClaims();
+          console.log(token);
+        } catch (error) {
+          console.error("Error fetching token:", error);
+        }
+      }
+    };
+
+    fetchToken();
+  }, [isAuthenticated, getAccessTokenSilently]);
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [license, setLicense] = useState<string>("None");
@@ -58,43 +76,47 @@ export function Create() {
   };
 
   return (
-    <Container size="lg" p="xs">
-      <Fieldset legend="Create new post" variant="filled">
-        <Textarea
-          label="Description"
-          placeholder="Whats on your mind?"
-          autosize
-          minRows={4}
-          maxRows={8}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <TagsInput
-          label="Tags"
-          description="Add up to 3 tags"
-          placeholder="Enter tag"
-          clearable
-          maxTags={3}
-          value={tags}
-          onChange={setTags}
-        />
-        <Select
-          label="License"
-          placeholder="Pick license"
-          data={["None", "MIT", "CC BY 4.0", "GFDL", "CC BY-SA 4.0"]}
-          searchable
-          nothingFoundMessage="Nothing found..."
-          allowDeselect={false}
-          checkIconPosition="right"
-          value={license}
-          onOptionSubmit={setLicense}
-        />
-        <DropzoneButton setImageUrlBase64={setImageUrlBase64} />
+    <Container size="lg" p="xs" h={"100%"}>
+      {isAuthenticated ? (
+        <Fieldset legend="Create new post" variant="filled">
+          <Textarea
+            label="Description"
+            placeholder="Whats on your mind?"
+            autosize
+            minRows={4}
+            maxRows={8}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <TagsInput
+            label="Tags"
+            description="Add up to 3 tags"
+            placeholder="Enter tag"
+            clearable
+            maxTags={3}
+            value={tags}
+            onChange={setTags}
+          />
+          <Select
+            label="License"
+            placeholder="Pick license"
+            data={["None", "MIT", "CC BY 4.0", "GFDL", "CC BY-SA 4.0"]}
+            searchable
+            nothingFoundMessage="Nothing found..."
+            allowDeselect={false}
+            checkIconPosition="right"
+            value={license}
+            onOptionSubmit={setLicense}
+          />
+          <DropzoneButton setImageUrlBase64={setImageUrlBase64} />
 
-        <Group justify="flex-end" mt="md">
-          <Button onClick={handleSubmit}>Submit</Button>
-        </Group>
-      </Fieldset>
+          <Group justify="flex-end" mt="md">
+            <Button onClick={handleSubmit}>Submit</Button>
+          </Group>
+        </Fieldset>
+      ) : (
+        <SingInFirst />
+      )}
     </Container>
   );
 }

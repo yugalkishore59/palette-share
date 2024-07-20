@@ -25,6 +25,7 @@ import { useState } from "react";
 import { NavLablesEnum } from "../../utils/enums";
 import { Link } from "react-router-dom";
 import { HeaderProps } from "../../utils/interfaces";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const user = {
   name: "Jane Spoonfighter",
@@ -40,13 +41,13 @@ const data = [
 ];
 
 export function Header({ active, setActive }: HeaderProps) {
+  const { logout, isLoading, loginWithRedirect, isAuthenticated } = useAuth0();
+
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
   });
-
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const links = data.map((item) => (
     <Tooltip
@@ -99,7 +100,7 @@ export function Header({ active, setActive }: HeaderProps) {
               />
             </UnstyledButton>
           </Tooltip>
-          {userLoggedIn ? (
+          {isAuthenticated ? (
             <Menu
               width={260}
               position="bottom-end"
@@ -151,7 +152,11 @@ export function Header({ active, setActive }: HeaderProps) {
                       stroke={1.5}
                     />
                   }
-                  onClick={() => setUserLoggedIn(false)}
+                  onClick={() =>
+                    logout({
+                      logoutParams: { returnTo: window.location.origin },
+                    })
+                  }
                 >
                   Logout
                 </Menu.Item>
@@ -160,9 +165,9 @@ export function Header({ active, setActive }: HeaderProps) {
           ) : (
             <Button
               variant="outline"
-              loading={false}
+              loading={isLoading}
               loaderProps={{ type: "dots" }}
-              // w={"100%"}
+              onClick={() => loginWithRedirect()}
             >
               Sign In
             </Button>
