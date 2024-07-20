@@ -15,6 +15,7 @@ import {
   IconSearch,
   IconSun,
   IconMoon,
+  IconLogin,
 } from "@tabler/icons-react";
 import classes from "./Navbar.module.css";
 import { NavLablesEnum } from "../../utils/enums";
@@ -102,7 +103,6 @@ export function Navbar() {
               <a
                 href="#"
                 className={classes.link}
-                // onClick={(event) => event.preventDefault()}
                 onClick={() =>
                   logout({ logoutParams: { returnTo: window.location.origin } })
                 }
@@ -112,6 +112,7 @@ export function Navbar() {
               </a>
             ) : (
               <Button
+                leftSection={<IconLogin />}
                 variant="outline"
                 loading={isLoading}
                 loaderProps={{ type: "dots" }}

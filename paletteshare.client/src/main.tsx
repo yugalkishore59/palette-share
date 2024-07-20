@@ -23,7 +23,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           domain="***REMOVED***"
           clientId="***REMOVED***"
           authorizationParams={{
-            redirect_uri: "https://localhost:5173",
+            // redirect_uri: "https://localhost:5173",
+            redirect_uri: window.location.origin,
           }}
         >
           <App />
