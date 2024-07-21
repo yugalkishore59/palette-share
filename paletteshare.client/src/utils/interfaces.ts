@@ -34,11 +34,12 @@ export interface PostType {
   userId: string;
   name: string; // name of the user
   username: string; // unique username of the user
+  profilePictureUrl: string;
   imageUrl?: string;
   tags: string[];
   createdAt?: string;
   updatedAt?: string;
-  likes: number;
+  likes: string[];
   comments: CommentType[];
   license: string;
 }
@@ -57,7 +58,6 @@ export interface PostProps {
 
 export interface HeaderProps {
   active: string;
-  setActive: (active: string) => void;
 }
 
 export interface GalleryProps {

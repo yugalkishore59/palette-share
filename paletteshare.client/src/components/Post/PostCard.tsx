@@ -13,6 +13,7 @@ import {
   Flex,
   Stack,
   Button,
+  UnstyledButton,
 } from "@mantine/core";
 import classes from "./PostCard.module.css";
 import {
@@ -26,6 +27,7 @@ import {
   IconMessageCircle,
   IconArrowsMaximize,
   IconArrowsMinimize,
+  IconChevronRight,
 } from "@tabler/icons-react";
 
 import { PostProps } from "../../utils/interfaces";
@@ -34,6 +36,7 @@ import { deletePost } from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { deletePostSlice } from "../../redux/slices/postSlice";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Link } from "react-router-dom";
 
 export function PostCard({ post }: PostProps) {
   const dispatch = useDispatch();
@@ -89,22 +92,32 @@ export function PostCard({ post }: PostProps) {
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section withBorder inheritPadding py="xs">
         <Group justify="space-between">
-          <Group>
-            <Avatar
-              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-              radius="xl"
-            />
+          <Link
+            className={classes.profileLink}
+            to={`/profile/${post.username}`}
+            // onClick={() => setActive(NavLablesEnum.PROFILE)}
+          >
+            <UnstyledButton className={classes.user}>
+              <Group>
+                <Avatar src={post.profilePictureUrl} radius="xl" />
 
-            <div style={{ flex: 1 }}>
-              <Text size="sm" fw={500}>
-                {post.name}
-              </Text>
+                <div style={{ flex: 1 }}>
+                  <Text size="sm" fw={500}>
+                    {post.name}
+                  </Text>
 
-              <Text c="dimmed" size="xs">
-                {post.username} • {formatUpdatedAt(post.updatedAt || "")}
-              </Text>
-            </div>
-          </Group>
+                  <Text c="dimmed" size="xs">
+                    {post.username} • {formatUpdatedAt(post.updatedAt || "")}
+                  </Text>
+                </div>
+
+                <IconChevronRight
+                  style={{ width: rem(14), height: rem(14) }}
+                  stroke={1.5}
+                />
+              </Group>
+            </UnstyledButton>
+          </Link>
           <Menu withinPortal position="bottom-end" shadow="sm">
             <Menu.Target>
               <ActionIcon variant="subtle" color="gray">
@@ -183,7 +196,7 @@ export function PostCard({ post }: PostProps) {
                 </Group>
                 <Divider my="md" />
                 <Text c="dimmed" size="sm">
-                  {post.likes} likes • {post.comments.length} comments
+                  {post.likes.length} likes • {post.comments.length} comments
                 </Text>
 
                 <Group mt="xs">

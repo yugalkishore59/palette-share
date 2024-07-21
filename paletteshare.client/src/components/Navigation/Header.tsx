@@ -26,13 +26,8 @@ import { NavLablesEnum } from "../../utils/enums";
 import { Link } from "react-router-dom";
 import { HeaderProps } from "../../utils/interfaces";
 import { useAuth0 } from "@auth0/auth0-react";
-
-const user = {
-  name: "Jane Spoonfighter",
-  email: "janspoon@fighter.dev",
-  image:
-    "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
-};
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const data = [
   { link: "/", label: NavLablesEnum.GALLERY, icon: IconHome },
@@ -40,8 +35,9 @@ const data = [
   { link: "/discover", label: NavLablesEnum.DISCOVER, icon: IconSearch },
 ];
 
-export function Header({ active, setActive }: HeaderProps) {
+export function Header({ active }: HeaderProps) {
   const { logout, isLoading, loginWithRedirect, isAuthenticated } = useAuth0();
+  const { user } = useSelector((state: RootState) => state.user);
 
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { setColorScheme } = useMantineColorScheme();
@@ -58,7 +54,6 @@ export function Header({ active, setActive }: HeaderProps) {
       key={item.label}
     >
       <Link
-        onClick={() => setActive(item.label)}
         className={classes.mainLink}
         data-active={item.label === active || undefined}
         to={item.link}
@@ -117,8 +112,8 @@ export function Header({ active, setActive }: HeaderProps) {
                 >
                   <Group gap={7}>
                     <Avatar
-                      src={user.image}
-                      alt={user.name}
+                      src={user?.profilePictureUrl}
+                      alt={user?.name}
                       radius="xl"
                       size={32}
                     />
@@ -130,17 +125,21 @@ export function Header({ active, setActive }: HeaderProps) {
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconUser
-                      style={{ width: rem(16), height: rem(16) }}
-                      stroke={1.5}
-                    />
-                  }
+                <Link
+                  className={classes.profileLink}
+                  to={`/profile/${user?.username}`}
                 >
-                  Profile
-                </Menu.Item>
-
+                  <Menu.Item
+                    leftSection={
+                      <IconUser
+                        style={{ width: rem(16), height: rem(16) }}
+                        stroke={1.5}
+                      />
+                    }
+                  >
+                    Profile
+                  </Menu.Item>
+                </Link>
                 <Menu.Divider />
 
                 <Menu.Label>Settings</Menu.Label>
