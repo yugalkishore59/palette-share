@@ -41,7 +41,7 @@ const postsSlice = createSlice({
     deletePostSlice(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((post) => post.id !== action.payload);
     },
-    updatePost(state, action: PayloadAction<PostType>) {
+    updatePostSlice(state, action: PayloadAction<PostType>) {
       state.posts = state.posts.map((post) => {
         if (post.id === action.payload.id) {
           return action.payload;
@@ -84,6 +84,6 @@ export const {
   incrementPageSlice,
   resetPostsSlice,
   deletePostSlice,
-  updatePost,
+  updatePostSlice,
 } = postsSlice.actions;
 export default postsSlice.reducer;
