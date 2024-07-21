@@ -17,6 +17,17 @@ export const getPosts = async (
   }
 };
 
+export const getPostsByUsername = async (username: string) => {
+  try {
+    const response = await axios.get(
+      `/api/posts/getpostsbyusername/${username}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+};
 export const getPostById = async (postId: string) => {
   try {
     const response = await axios.get(`/api/posts/getpost/${postId}`);

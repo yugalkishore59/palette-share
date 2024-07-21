@@ -105,35 +105,43 @@ export function Navbar() {
                 />
               </ActionIcon>
             </Group>
-            <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
-              <Avatar
-                src={user?.profilePictureUrl}
-                size={120}
-                radius={120}
-                mx="auto"
-              />
-              <Text ta="center" fz="lg" fw={500} mt="md">
-                {user?.name}
-              </Text>
-              <Text ta="center" c="dimmed" fz="sm">
-                @{user?.username}
-              </Text>
-              <Link
-                className={classes.profileLink}
-                to={`/profile/${user?.username}`}
-                onClick={() => setActive(NavLablesEnum.PROFILE)}
+            {isAuthenticated && (
+              <Paper
+                radius="md"
+                withBorder
+                p="lg"
+                bg="var(--mantine-color-body)"
               >
-                <Button
-                  variant="default"
-                  fullWidth
-                  mt="md"
-                  leftSection={<IconUserCircle />}
-                  className={classes.profileButton}
+                <Avatar
+                  src={user?.profilePictureUrl}
+                  size={120}
+                  radius={120}
+                  mx="auto"
+                />
+                <Text ta="center" fz="lg" fw={500} mt="md">
+                  {user?.name}
+                </Text>
+                <Text ta="center" c="dimmed" fz="sm">
+                  @{user?.username}
+                </Text>
+                <Link
+                  className={classes.profileLink}
+                  to={`/profile/${user?.username}`}
+                  onClick={() => setActive(NavLablesEnum.PROFILE)}
                 >
-                  View Profile
-                </Button>
-              </Link>
-            </Paper>
+                  <Button
+                    variant="default"
+                    fullWidth
+                    mt="md"
+                    leftSection={<IconUserCircle />}
+                    className={classes.profileButton}
+                  >
+                    View Profile
+                  </Button>
+                </Link>
+              </Paper>
+            )}
+
             <Container w={"100%"} p={0} mt="md">
               {links}
             </Container>

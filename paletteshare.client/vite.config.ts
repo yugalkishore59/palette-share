@@ -64,6 +64,10 @@ export default defineConfig({
         target,
         secure: false,
       },
+      "^/api/posts/getpostsbyusername": {
+        target,
+        secure: false,
+      },
       "^/api/posts/createpost": {
         target,
         secure: false,

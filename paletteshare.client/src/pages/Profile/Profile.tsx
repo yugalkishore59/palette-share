@@ -11,15 +11,76 @@ import classes from "./Profile.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { PostCard } from "../../components/Post/PostCard";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { PostType, UserType } from "../../utils/interfaces";
+import { getUserByUsername, getPostsByUsername } from "../../utils/api";
+import { COVER_PLACEHOLDER, PROFILE_PLACEHOLDER } from "../../utils/constants";
+import { formatNumber } from "../../utils/functions";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const stats = [
-  { value: "34K", label: "Followers" },
-  { value: "187", label: "Follows" },
-  { value: "1.6K", label: "Posts" },
-];
+interface userStatsType {
+  value: string;
+  label: string;
+}
+
+enum userStatsEnum {
+  FOLLOWERS = "Followers",
+  FOLLOWING = "Follows",
+  POSTS = "Posts",
+}
+
 export const Profile = () => {
-  const { posts } = useSelector((state: RootState) => state.posts);
-  const items = stats.map((stat) => (
+  const { isAuthenticated } = useAuth0();
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const { user } = useSelector((state: RootState) => state.user);
+  const [isMyProfile, setIsMyProfile] = useState<boolean | null>(null);
+  const location = useLocation();
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [userStats, setUserStats] = useState<userStatsType[]>([
+    { value: "0", label: userStatsEnum.FOLLOWERS },
+    { value: "0", label: userStatsEnum.FOLLOWING },
+    { value: "0", label: userStatsEnum.POSTS },
+  ]);
+
+  useEffect(() => {
+    if (currentUser?.username && user?.username) {
+      setIsMyProfile(currentUser?.username === user?.username);
+    }
+  }, [currentUser, user]);
+
+  useEffect(() => {
+    const getUserDetails = async () => {
+      try {
+        const username = location.pathname.split("/")[2] ?? null;
+        const response = await getUserByUsername(username);
+        setCurrentUser(response);
+        setUserStats([
+          {
+            value: formatNumber(response.followers?.length),
+            label: userStatsEnum.FOLLOWERS,
+          },
+          {
+            value: formatNumber(response.following?.length),
+            label: userStatsEnum.FOLLOWING,
+          },
+          {
+            value: formatNumber(response.posts?.length),
+            label: userStatsEnum.POSTS,
+          },
+        ]);
+
+        const posts = await getPostsByUsername(response.username);
+        setPosts(posts);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getUserDetails();
+  }, [location]);
+
+  const items = userStats.map((stat) => (
     <div key={stat.label}>
       <Text ta="center" fz="lg" fw={500}>
         {stat.value}
@@ -41,12 +102,13 @@ export const Profile = () => {
         <Card.Section
           h={140}
           style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80)",
+            backgroundImage: `url(${
+              currentUser?.coverPhotoUrl ?? COVER_PLACEHOLDER
+            })`,
           }}
         />
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+          src={currentUser?.profilePictureUrl ?? PROFILE_PLACEHOLDER}
           size={150}
           radius={150}
           mx="auto"
@@ -54,26 +116,28 @@ export const Profile = () => {
           className={classes.avatar}
         />
         <Text ta="center" fz="lg" fw={500} mt="sm">
-          Bill Headbanger
+          {currentUser?.name ?? "Loading..."}
         </Text>
         <Text ta="center" fz="sm" c="dimmed">
-          Fullstack engineer
+          @{currentUser?.username ?? "Loading..."}
         </Text>
         <Group mt="md" justify="center" gap={30}>
           {items}
         </Group>
-        <Group justify="center">
-          <Button
-            fullWidth
-            radius="md"
-            mt="xl"
-            size="md"
-            w={300}
-            variant="default"
-          >
-            Follow
-          </Button>
-        </Group>
+        {isAuthenticated && !isMyProfile && (
+          <Group justify="center">
+            <Button
+              fullWidth
+              radius="md"
+              mt="xl"
+              size="md"
+              w={300}
+              variant="default"
+            >
+              Follow
+            </Button>
+          </Group>
+        )}
       </Card>
       <Stack>
         {posts.length > 0 &&
