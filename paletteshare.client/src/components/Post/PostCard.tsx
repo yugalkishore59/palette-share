@@ -28,21 +28,30 @@ import {
   IconArrowsMaximize,
   IconArrowsMinimize,
   IconChevronRight,
+  IconHeartFilled,
 } from "@tabler/icons-react";
 
 import { PostProps } from "../../utils/interfaces";
 import { useFullscreen } from "@mantine/hooks";
-import { deletePost } from "../../utils/api";
-import { useDispatch } from "react-redux";
+import { deletePost, updatePost } from "../../utils/api";
+import { useDispatch, useSelector } from "react-redux";
 import { deletePostSlice } from "../../redux/slices/postSlice";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
+import { RootState } from "../../redux/store";
+import { updatePostSlice } from "../../redux/slices/postSlice";
+import { useEffect, useState } from "react";
 
 export function PostCard({ post }: PostProps) {
   const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
-  const { isAuthenticated, getIdTokenClaims } = useAuth0();
+  const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
+  const { user } = useSelector((state: RootState) => state.user);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
 
+  useEffect(() => {
+    setIsLiked(post.likes.includes(user?.username ?? ""));
+  }, [post, user]);
   const formatUpdatedAt = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
@@ -75,7 +84,10 @@ export function PostCard({ post }: PostProps) {
   };
 
   const handleDelete = async () => {
-    if (isAuthenticated && post.id) {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+    if (post.id) {
       try {
         const idTokenClaims = await getIdTokenClaims();
         const idToken = idTokenClaims?.__raw ?? "";
@@ -88,6 +100,32 @@ export function PostCard({ post }: PostProps) {
     }
   };
 
+  const handleLike = async () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+    if (user?.username) {
+      const postid = post.id ?? "";
+      const idTokenClaims = await getIdTokenClaims();
+      const idToken = idTokenClaims?.__raw ?? "";
+
+      if (isLiked) {
+        setIsLiked(false);
+        const updatedPost = {
+          ...post,
+          likes: post.likes.filter((like) => like !== user.username),
+        };
+        dispatch(updatePostSlice(updatedPost));
+        updatePost(postid, updatedPost, idToken);
+      } else {
+        setIsLiked(true);
+        const updatedPost = { ...post, likes: [...post.likes, user.username] };
+        dispatch(updatePostSlice(updatedPost));
+        updatePost(postid, updatedPost, idToken);
+      }
+    }
+  };
+
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section withBorder inheritPadding py="xs">
@@ -95,7 +133,6 @@ export function PostCard({ post }: PostProps) {
           <Link
             className={classes.profileLink}
             to={`/profile/${post.username}`}
-            // onClick={() => setActive(NavLablesEnum.PROFILE)}
           >
             <UnstyledButton className={classes.user}>
               <Group>
@@ -118,32 +155,36 @@ export function PostCard({ post }: PostProps) {
               </Group>
             </UnstyledButton>
           </Link>
-          <Menu withinPortal position="bottom-end" shadow="sm">
-            <Menu.Target>
-              <ActionIcon variant="subtle" color="gray">
-                <IconDots style={{ width: rem(16), height: rem(16) }} />
-              </ActionIcon>
-            </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={
-                  <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                Edit
-              </Menu.Item>
-              <Menu.Item
-                leftSection={
-                  <IconTrash style={{ width: rem(14), height: rem(14) }} />
-                }
-                color="red"
-                onClick={handleDelete}
-              >
-                Delete
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          {user?.username === post.username && (
+            <Menu withinPortal position="bottom-end" shadow="sm">
+              <Menu.Target>
+                <ActionIcon variant="subtle" color="gray">
+                  <IconDots style={{ width: rem(16), height: rem(16) }} />
+                </ActionIcon>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={
+                    <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  Edit
+                </Menu.Item>
+
+                <Menu.Item
+                  leftSection={
+                    <IconTrash style={{ width: rem(14), height: rem(14) }} />
+                  }
+                  color="red"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          )}
         </Group>
       </Card.Section>
       <Card.Section>
@@ -196,14 +237,25 @@ export function PostCard({ post }: PostProps) {
                 </Group>
                 <Divider my="md" />
                 <Text c="dimmed" size="sm">
-                  {post.likes.length} likes • {post.comments.length} comments
+                  {post.likes.length}{" "}
+                  {post.likes.length === 1 ? "like" : "likes"}
+                  {/* • {post.comments.length} comments */}
                 </Text>
 
                 <Group mt="xs">
-                  <ActionIcon variant="default" radius="md" size={36}>
-                    <IconHeart className={classes.like} stroke={1.5} />
+                  <ActionIcon
+                    variant="default"
+                    radius="md"
+                    size={36}
+                    onClick={handleLike}
+                  >
+                    {isLiked ? (
+                      <IconHeartFilled className={classes.like} stroke={1.5} />
+                    ) : (
+                      <IconHeart className={classes.like} stroke={1.5} />
+                    )}
                   </ActionIcon>
-                  <ActionIcon variant="default" radius="md" size={36}>
+                  {/* <ActionIcon variant="default" radius="md" size={36}>
                     <IconMessageCircle stroke={1.5} />
                   </ActionIcon>
                   <ActionIcon variant="default" radius="md" size={36}>
@@ -211,7 +263,7 @@ export function PostCard({ post }: PostProps) {
                   </ActionIcon>
                   <ActionIcon variant="default" radius="md" size={36}>
                     <IconDownload stroke={1.5} />
-                  </ActionIcon>
+                  </ActionIcon> */}
                 </Group>
               </div>
             </Stack>

@@ -87,6 +87,8 @@ namespace PaletteShare.Server.Controllers
                 existingPost.ImageUrl = updatedPost.ImageUrl;
                 existingPost.Tags = updatedPost.Tags;
                 existingPost.UpdatedAt = DateTime.UtcNow;
+                existingPost.Likes = updatedPost.Likes;
+                existingPost.Comments = updatedPost.Comments;
                 existingPost.License = updatedPost.License;
 
                 await _postService.UpdatePostAsync(id, existingPost);
