@@ -3,6 +3,7 @@ enum NavLablesEnum {
   CREATE = "Create",
   DISCOVER = "Discover",
   PROFILE = "Profile",
+  NONE = "None",
 }
 
 export { NavLablesEnum };

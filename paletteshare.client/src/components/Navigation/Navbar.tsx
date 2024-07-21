@@ -1,5 +1,5 @@
 import cx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Group,
   ActionIcon,
@@ -7,6 +7,11 @@ import {
   useComputedColorScheme,
   Box,
   Button,
+  Paper,
+  Avatar,
+  Text,
+  Title,
+  Container,
 } from "@mantine/core";
 import {
   IconLogout,
@@ -16,6 +21,7 @@ import {
   IconSun,
   IconMoon,
   IconLogin,
+  IconUserCircle,
 } from "@tabler/icons-react";
 import classes from "./Navbar.module.css";
 import { NavLablesEnum } from "../../utils/enums";
@@ -38,8 +44,9 @@ export const getInitialActiveLabel = (pathname: string) => {
     case "/profile":
       return NavLablesEnum.PROFILE;
     case "/":
-    default:
       return NavLablesEnum.GALLERY;
+    default:
+      return NavLablesEnum.NONE;
   }
 };
 
@@ -74,7 +81,7 @@ export function Navbar() {
         <nav className={classes.navbar}>
           <div className={classes.navbarMain}>
             <Group className={classes.header} justify="space-between">
-              PalletteShare
+              <Title order={3}>PalletteShare</Title>
               <ActionIcon
                 onClick={() =>
                   setColorScheme(
@@ -95,7 +102,38 @@ export function Navbar() {
                 />
               </ActionIcon>
             </Group>
-            {links}
+            <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
+              <Avatar
+                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+                size={120}
+                radius={120}
+                mx="auto"
+              />
+              <Text ta="center" fz="lg" fw={500} mt="md">
+                Jane Fingerlicker
+              </Text>
+              <Text ta="center" c="dimmed" fz="sm">
+                jfingerlicker@me.io • Art director
+              </Text>
+              <Link
+                className={classes.profileLink}
+                to={"/profile/yugal"}
+                onClick={() => setActive(NavLablesEnum.PROFILE)}
+              >
+                <Button
+                  variant="default"
+                  fullWidth
+                  mt="md"
+                  leftSection={<IconUserCircle />}
+                  className={classes.profileButton}
+                >
+                  View Profile
+                </Button>
+              </Link>
+            </Paper>
+            <Container w={"100%"} p={0} mt="md">
+              {links}
+            </Container>
           </div>
 
           <div className={classes.footer}>
