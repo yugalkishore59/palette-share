@@ -22,6 +22,9 @@ namespace PaletteShare.Server.Models
         [BsonElement("username")]
         public string Username { get; set; } = string.Empty;
 
+        [BsonElement("profilePictureUrl")]
+        public string ProfilePictureUrl { get; set; } = string.Empty;
+
         [BsonElement("imageUrl")]
         public string ImageUrl { get; set; } = string.Empty;
 
@@ -35,7 +38,7 @@ namespace PaletteShare.Server.Models
         public DateTime UpdatedAt { get; set; }
 
         [BsonElement("likes")]
-        public int Likes { get; set; }
+        public List<string> Likes { get; set; } = new List<string>();
 
         [BsonElement("comments")]
         public List<Comment> Comments { get; set; } = new List<Comment>();

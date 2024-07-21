@@ -25,6 +25,9 @@ import { createPost } from "../../utils/api";
 import { PostType } from "../../utils/interfaces";
 import { useAuth0 } from "@auth0/auth0-react";
 import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { PROFILE_PLACEHOLDER } from "../../utils/constants";
 
 const images = [
   "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png",
@@ -38,6 +41,7 @@ export function Create() {
   const [tags, setTags] = useState<string[]>([]);
   const [license, setLicense] = useState<string>("None");
   const [imageUrlBase64, setImageUrlBase64] = useState<string>();
+  const { user } = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async () => {
     if (isAuthenticated) {
@@ -45,14 +49,25 @@ export function Create() {
         const idTokenClaims = await getIdTokenClaims();
         const idToken = idTokenClaims?.__raw ?? "";
 
+        const userId = user?.id;
+        const name = user?.name;
+        const username = user?.username;
+        const profilePictureUrl =
+          user?.profilePictureUrl ?? PROFILE_PLACEHOLDER;
+
+        if (!userId || !name || !username || !profilePictureUrl) {
+          return;
+        }
+
         const post: PostType = {
           description: description,
-          userId: "1",
-          name: "John Doe",
-          username: "johndoe",
+          userId: userId,
+          name: name,
+          username: username,
+          profilePictureUrl: profilePictureUrl,
           imageUrl: imageUrlBase64,
           tags: tags,
-          likes: 0,
+          likes: [],
           comments: [],
           license: license,
           createdAt: new Date().toISOString(),

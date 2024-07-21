@@ -65,13 +65,16 @@ export function Navbar() {
 
   const { user } = useSelector((state: RootState) => state.user);
 
+  useEffect(() => {
+    setActive(getInitialActiveLabel(location.pathname));
+  }, [location]);
+
   const links = data.map((item) => (
     <Link
       className={classes.link}
       data-active={item.label === active || undefined}
       to={item.link}
       key={item.label}
-      onClick={() => setActive(item.label)}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
@@ -127,7 +130,6 @@ export function Navbar() {
                 <Link
                   className={classes.profileLink}
                   to={`/profile/${user?.username}`}
-                  onClick={() => setActive(NavLablesEnum.PROFILE)}
                 >
                   <Button
                     variant="default"
@@ -175,7 +177,7 @@ export function Navbar() {
         </nav>
       </Box>
       <Box hiddenFrom="sm">
-        <Header active={active} setActive={setActive} />
+        <Header active={active} />
       </Box>
     </>
   );
