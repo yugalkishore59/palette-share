@@ -1,14 +1,14 @@
 export interface UserType {
-  id: string;
+  id?: string;
   name: string;
   username: string;
   email: string;
   profilePictureUrl: string;
   coverPhotoUrl: string;
   bio: string;
-  location: string;
-  website: string;
-  socialLinks: {
+  location?: string;
+  website?: string;
+  socialLinks?: {
     instagram: string;
     twitter: string;
     facebook: string;

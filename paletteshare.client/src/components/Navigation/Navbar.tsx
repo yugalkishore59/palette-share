@@ -28,6 +28,8 @@ import { NavLablesEnum } from "../../utils/enums";
 import { useLocation, Link } from "react-router-dom";
 import { Header } from "./Header";
 import { useAuth0 } from "@auth0/auth0-react";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 const data = [
   { link: "/", label: NavLablesEnum.GALLERY, icon: IconHome },
@@ -59,8 +61,9 @@ export function Navbar() {
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
   });
-  const { logout, user, isLoading, loginWithRedirect, isAuthenticated } =
-    useAuth0();
+  const { logout, isLoading, loginWithRedirect, isAuthenticated } = useAuth0();
+
+  const { user } = useSelector((state: RootState) => state.user);
 
   const links = data.map((item) => (
     <Link
@@ -104,20 +107,20 @@ export function Navbar() {
             </Group>
             <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
               <Avatar
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+                src={user?.profilePictureUrl}
                 size={120}
                 radius={120}
                 mx="auto"
               />
               <Text ta="center" fz="lg" fw={500} mt="md">
-                Jane Fingerlicker
+                {user?.name}
               </Text>
               <Text ta="center" c="dimmed" fz="sm">
-                jfingerlicker@me.io • Art director
+                @{user?.username}
               </Text>
               <Link
                 className={classes.profileLink}
-                to={"/profile/yugal"}
+                to={`/profile/${user?.username}`}
                 onClick={() => setActive(NavLablesEnum.PROFILE)}
               >
                 <Button

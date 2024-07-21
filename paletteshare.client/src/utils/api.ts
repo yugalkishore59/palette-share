@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PostType } from "./interfaces";
+import { PostType, UserType } from "./interfaces";
 import { POSTS_IN_ONE_PAGE } from "./constants";
 
 export const getPosts = async (
@@ -73,6 +73,52 @@ export const deletePost = async (postId: string, token: string) => {
     return response.data;
   } catch (error) {
     console.error(`Error deleting post ${postId}:`, error);
+    throw error;
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const response = await axios.get(`/api/users/getuserbyemail/${email}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user ${email}:`, error);
+    throw error;
+  }
+};
+
+export const getUserByUsername = async (username: string) => {
+  try {
+    const response = await axios.get(
+      `/api/users/getuserbyusername/${username}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user ${username}:`, error);
+    throw error;
+  }
+};
+
+export const getUserById = async (userId: string) => {
+  try {
+    const response = await axios.get(`/api/users/getuser/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user ${userId}:`, error);
+    throw error;
+  }
+};
+
+export const createUser = async (userData: UserType, token: string) => {
+  try {
+    const response = await axios.post("/api/users/createuser", userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating user:", error);
     throw error;
   }
 };

@@ -15,6 +15,10 @@ namespace PaletteShare.Server.Services
 
         public async Task<List<User>> GetUsersAsync() => await _users.Find(user => true).ToListAsync();
 
+        public async Task<User> GetUserByEmailAsync(string email) => await _users.Find(user => user.Email == email).FirstOrDefaultAsync();
+
+        public async Task<User> GetUserByUsernameAsync(string username) => await _users.Find(user => user.Username == username).FirstOrDefaultAsync();
+
         public async Task<User> GetUserAsync(string id) => await _users.Find<User>(user => user.Id == id).FirstOrDefaultAsync();
 
         public async Task CreateUserAsync(User user) => await _users.InsertOneAsync(user);

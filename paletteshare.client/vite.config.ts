@@ -80,6 +80,22 @@ export default defineConfig({
         target,
         secure: false,
       },
+      "^/api/users/getuser": {
+        target,
+        secure: false,
+      },
+      "^/api/users/getuserbyemail": {
+        target,
+        secure: false,
+      },
+      "^/api/users/getuserbyusername": {
+        target,
+        secure: false,
+      },
+      "^/api/users/createuser": {
+        target,
+        secure: false,
+      },
     },
     port: 5173,
     https: {
