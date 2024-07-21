@@ -52,6 +52,7 @@ namespace PaletteShare.Server.Controllers
         }
 
         [HttpGet("getpost/{id}")]
+        [Authorize]
         public async Task<ActionResult<Post>> GetPost(string id)
         {
             var post = await _postService.GetPostAsync(id);
@@ -59,6 +60,13 @@ namespace PaletteShare.Server.Controllers
             {
                 return NotFound();
             }
+            return Ok(post);
+        }
+
+        [HttpGet("getpostsbyusername/{username}")]
+        public async Task<ActionResult<List<Post>>> GetPostsByUsername(string username)
+        {
+            var post = await _postService.GetPostsByUsernameAsync(username);
             return Ok(post);
         }
 
