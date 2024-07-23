@@ -1,18 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { useEffect, useRef, useState } from "react";
-import { incrementPageSlice, resetPostsSlice } from "../redux/slices/postSlice";
+import { incrementPageSlice } from "../redux/slices/postSlice";
 import { fetchPosts } from "../redux/slices/postSlice";
-import { Button, Container, ScrollArea, Stack } from "@mantine/core";
+import { Container, Stack } from "@mantine/core";
 
 import { PostCard } from "../components/Post/PostCard";
 import { SCROLL_THRESHOLD } from "../utils/constants";
 import { GalleryProps } from "../utils/interfaces";
-import { useAuth0 } from "@auth0/auth0-react";
 
 export const Gallery = ({ scrollableRef }: GalleryProps) => {
   const dispatch = useDispatch();
-  const { posts, page, loading, isLastPost, error } = useSelector(
+  const { posts, page, loading, isLastPost } = useSelector(
     (state: RootState) => state.posts
   );
   const [flag, setFlag] = useState(false);
