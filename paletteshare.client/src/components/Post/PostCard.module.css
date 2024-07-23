@@ -5,6 +5,10 @@
   );
 }
 
+.profileLink {
+  text-decoration: none;
+}
+
 .section {
   border-bottom: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
@@ -37,7 +41,10 @@
 
 .user {
   padding: var(--mantine-spacing-xs) !important;
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
+  color: light-dark(
+    var(--mantine-color-black),
+    var(--mantine-color-dark-0)
+  ) !important;
 
   @mixin hover {
     background-color: light-dark(

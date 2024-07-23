@@ -8,16 +8,21 @@ import {
   Stack,
 } from "@mantine/core";
 import classes from "./Profile.module.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { PostCard } from "../../components/Post/PostCard";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PostType, UserType } from "../../utils/interfaces";
-import { getUserByUsername, getPostsByUsername } from "../../utils/api";
+import {
+  getUserByUsername,
+  getPostsByUsername,
+  updateUser,
+} from "../../utils/api";
 import { COVER_PLACEHOLDER, PROFILE_PLACEHOLDER } from "../../utils/constants";
 import { formatNumber } from "../../utils/functions";
 import { useAuth0 } from "@auth0/auth0-react";
+import { setUser } from "../../redux/slices/userSlice";
 
 interface userStatsType {
   value: string;
@@ -31,44 +36,48 @@ enum userStatsEnum {
 }
 
 export const Profile = () => {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
+  const dispatch = useDispatch();
   const [posts, setPosts] = useState<PostType[]>([]);
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user); // current logged in user
   const [isMyProfile, setIsMyProfile] = useState<boolean | null>(null);
   const location = useLocation();
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [profileOwner, setProfileOwner] = useState<UserType | null>(null); // user who's profile is being viewed
   const [userStats, setUserStats] = useState<userStatsType[]>([
     { value: "0", label: userStatsEnum.FOLLOWERS },
     { value: "0", label: userStatsEnum.FOLLOWING },
     { value: "0", label: userStatsEnum.POSTS },
   ]);
+  const [isFollowed, setIsFollowed] = useState<boolean>(false); // is the logged in user following the profile owner
 
   useEffect(() => {
-    if (currentUser?.username && user?.username) {
-      setIsMyProfile(currentUser?.username === user?.username);
+    if (profileOwner && user) {
+      setIsMyProfile(profileOwner.username === user.username);
+      setIsFollowed(profileOwner.followers?.includes(user.username));
+
+      setUserStats([
+        {
+          value: formatNumber(profileOwner.followers?.length),
+          label: userStatsEnum.FOLLOWERS,
+        },
+        {
+          value: formatNumber(profileOwner.following?.length),
+          label: userStatsEnum.FOLLOWING,
+        },
+        {
+          value: formatNumber(profileOwner.posts?.length),
+          label: userStatsEnum.POSTS,
+        },
+      ]);
     }
-  }, [currentUser, user]);
+  }, [profileOwner, user]);
 
   useEffect(() => {
     const getUserDetails = async () => {
       try {
         const username = location.pathname.split("/")[2] ?? null;
         const response = await getUserByUsername(username);
-        setCurrentUser(response);
-        setUserStats([
-          {
-            value: formatNumber(response.followers?.length),
-            label: userStatsEnum.FOLLOWERS,
-          },
-          {
-            value: formatNumber(response.following?.length),
-            label: userStatsEnum.FOLLOWING,
-          },
-          {
-            value: formatNumber(response.posts?.length),
-            label: userStatsEnum.POSTS,
-          },
-        ]);
+        setProfileOwner(response);
 
         const posts = await getPostsByUsername(response.username);
         setPosts(posts);
@@ -79,6 +88,61 @@ export const Profile = () => {
 
     getUserDetails();
   }, [location]);
+
+  const handleFollow = async () => {
+    if (!profileOwner) return;
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+    if (user?.username) {
+      const idTokenClaims = await getIdTokenClaims();
+      const idToken = idTokenClaims?.__raw ?? "";
+      const userId = user.id ?? "";
+      const profileOwnerId = profileOwner.id ?? "";
+
+      if (isFollowed) {
+        setIsFollowed(false);
+
+        // remove following from the logged in user
+        const updatedUser = {
+          ...user,
+          following: user.following.filter(
+            (_following) => _following !== profileOwner.username
+          ),
+        };
+        dispatch(setUser(updatedUser));
+        updateUser(userId, updatedUser, idToken);
+
+        // remove follower from the profile owner
+        const updatedProfileOwner = {
+          ...profileOwner,
+          followers: profileOwner.followers.filter(
+            (_follower) => _follower !== user.username
+          ),
+        };
+        setProfileOwner(updatedProfileOwner);
+        updateUser(profileOwnerId, updatedProfileOwner, idToken);
+      } else {
+        setIsFollowed(true);
+
+        // add following to the logged in user
+        const updatedUser = {
+          ...user,
+          following: [...user.following, profileOwner.username],
+        };
+        dispatch(setUser(updatedUser));
+        updateUser(userId, updatedUser, idToken);
+
+        // add follower to the profile owner
+        const updatedProfileOwner = {
+          ...profileOwner,
+          followers: [...profileOwner.followers, user.username],
+        };
+        setProfileOwner(updatedProfileOwner);
+        updateUser(profileOwnerId, updatedProfileOwner, idToken);
+      }
+    }
+  };
 
   const items = userStats.map((stat) => (
     <div key={stat.label}>
@@ -103,12 +167,12 @@ export const Profile = () => {
           h={140}
           style={{
             backgroundImage: `url(${
-              currentUser?.coverPhotoUrl ?? COVER_PLACEHOLDER
+              profileOwner?.coverPhotoUrl ?? COVER_PLACEHOLDER
             })`,
           }}
         />
         <Avatar
-          src={currentUser?.profilePictureUrl ?? PROFILE_PLACEHOLDER}
+          src={profileOwner?.profilePictureUrl ?? PROFILE_PLACEHOLDER}
           size={150}
           radius={150}
           mx="auto"
@@ -116,10 +180,10 @@ export const Profile = () => {
           className={classes.avatar}
         />
         <Text ta="center" fz="lg" fw={500} mt="sm">
-          {currentUser?.name ?? "Loading..."}
+          {profileOwner?.name ?? "Loading..."}
         </Text>
         <Text ta="center" fz="sm" c="dimmed">
-          @{currentUser?.username ?? "Loading..."}
+          @{profileOwner?.username ?? "Loading..."}
         </Text>
         <Group mt="md" justify="center" gap={30}>
           {items}
@@ -133,8 +197,9 @@ export const Profile = () => {
               size="md"
               w={300}
               variant="default"
+              onClick={handleFollow}
             >
-              Follow
+              {isFollowed ? "Unfollow" : "Follow"}
             </Button>
           </Group>
         )}
