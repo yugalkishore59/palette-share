@@ -1,26 +1,15 @@
 import {
-  Image,
   Container,
-  Card,
   Group,
-  Text,
-  Menu,
-  ActionIcon,
-  SimpleGrid,
-  rem,
-  Paper,
   Fieldset,
-  TextInput,
   Button,
   Textarea,
   TagsInput,
   Select,
 } from "@mantine/core";
-import { Carousel } from "@mantine/carousel";
-import classes from "./Create.module.css";
-import { IconDots, IconEye, IconFileZip, IconTrash } from "@tabler/icons-react";
+// import classes from "./Create.module.css";
 import { DropzoneButton } from "./DropzoneButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPost } from "../../utils/api";
 import { PostType } from "../../utils/interfaces";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -28,12 +17,6 @@ import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { PROFILE_PLACEHOLDER } from "../../utils/constants";
-
-const images = [
-  "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png",
-  "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-2.png",
-  "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png",
-];
 
 export function Create() {
   const { isAuthenticated, getIdTokenClaims } = useAuth0();
