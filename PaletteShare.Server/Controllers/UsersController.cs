@@ -75,5 +75,38 @@ namespace PaletteShare.Server.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpPut("updateuser/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser(string id, User updatedUser)
+        {
+            var existingUser = await _userService.GetUserAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // Update properties of existingUser with updatedUser
+                existingUser.Name = updatedUser.Name;
+                existingUser.ProfilePictureUrl = updatedUser.ProfilePictureUrl;
+                existingUser.CoverPhotoUrl = updatedUser.CoverPhotoUrl;
+                existingUser.Bio = updatedUser.Bio;
+                existingUser.Website = updatedUser.Website;
+                existingUser.SocialLinks = updatedUser.SocialLinks;
+                existingUser.Following = updatedUser.Following;
+                existingUser.Followers = updatedUser.Followers;
+                existingUser.Posts = updatedUser.Posts;
+
+                await _userService.UpdateUserAsync(id, existingUser);
+
+                return NoContent(); // 204 No Content
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

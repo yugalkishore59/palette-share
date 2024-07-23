@@ -133,3 +133,25 @@ export const createUser = async (userData: UserType, token: string) => {
     throw error;
   }
 };
+
+export const updateUser = async (
+  userId: string,
+  updatedUserData: UserType,
+  token: string
+) => {
+  try {
+    const response = await axios.put(
+      `/api/users/updateuser/${userId}`,
+      updatedUserData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating user ${userId}:`, error);
+    throw error;
+  }
+};

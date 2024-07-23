@@ -10,16 +10,18 @@ import {
 // import classes from "./Create.module.css";
 import { DropzoneButton } from "./DropzoneButton";
 import { useState } from "react";
-import { createPost } from "../../utils/api";
+import { createPost, updateUser } from "../../utils/api";
 import { PostType } from "../../utils/interfaces";
 import { useAuth0 } from "@auth0/auth0-react";
 import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { PROFILE_PLACEHOLDER } from "../../utils/constants";
+import { setUser } from "../../redux/slices/userSlice";
 
 export function Create() {
   const { isAuthenticated, getIdTokenClaims } = useAuth0();
+  const dispatch = useDispatch();
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [license, setLicense] = useState<string>("None");
@@ -56,7 +58,19 @@ export function Create() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        createPost(post, idToken);
+        const response = await createPost(post, idToken);
+        if (!response) {
+          return;
+        }
+
+        // adding post to the user profile
+        const updatedUser = {
+          ...user,
+          posts: [...user.posts, response.id],
+        };
+        dispatch(setUser(updatedUser));
+        updateUser(userId, updatedUser, idToken);
+
         setDescription("");
         setTags([]);
         setLicense("None");

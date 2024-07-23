@@ -100,6 +100,10 @@ export default defineConfig({
         target,
         secure: false,
       },
+      "^/api/users/updateuser": {
+        target,
+        secure: false,
+      },
     },
     port: 5173,
     https: {
