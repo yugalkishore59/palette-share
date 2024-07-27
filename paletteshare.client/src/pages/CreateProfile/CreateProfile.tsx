@@ -69,7 +69,6 @@ export const CreateProfile = () => {
         updatedAt: new Date().toISOString(),
         followers: [],
         following: [],
-        posts: [],
       };
       createUser(_user, idToken);
       setImageUrlBase64(PROFILE_PLACEHOLDER);

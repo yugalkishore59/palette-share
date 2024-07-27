@@ -97,11 +97,24 @@ namespace PaletteShare.Server.Controllers
                 existingUser.SocialLinks = updatedUser.SocialLinks;
                 existingUser.Following = updatedUser.Following;
                 existingUser.Followers = updatedUser.Followers;
-                existingUser.Posts = updatedUser.Posts;
 
                 await _userService.UpdateUserAsync(id, existingUser);
 
                 return NoContent(); // 204 No Content
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpGet("getusersbysearchterm/{searchTerm}")]
+        public async Task<ActionResult<List<User>>> GetUsersBySearchTerm(string searchTerm)
+        {
+            try
+            {
+                var users = await _userService.GetUsersBySearchTermAsync(searchTerm);
+                return Ok(users);
             }
             catch (Exception ex)
             {

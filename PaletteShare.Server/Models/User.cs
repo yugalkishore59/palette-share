@@ -48,9 +48,6 @@ namespace PaletteShare.Server.Models
 
         [BsonElement("followers")]
         public List<string> Followers { get; set; } = new List<string>();
-
-        [BsonElement("posts")]
-        public List<string> Posts { get; set; } = new List<string>();
     }
 
     [BsonIgnoreExtraElements]

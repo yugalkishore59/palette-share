@@ -104,6 +104,10 @@ export default defineConfig({
         target,
         secure: false,
       },
+      "^/api/users/getusersbysearchterm": {
+        target,
+        secure: false,
+      },
     },
     port: 5173,
     https: {

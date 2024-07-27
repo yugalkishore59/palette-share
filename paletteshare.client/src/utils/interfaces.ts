@@ -17,7 +17,6 @@ export interface UserType {
   updatedAt: string;
   following: string[];
   followers: string[];
-  posts: string[];
 }
 
 export interface CommentType {
