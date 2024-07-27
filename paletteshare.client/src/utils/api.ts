@@ -155,3 +155,15 @@ export const updateUser = async (
     throw error;
   }
 };
+
+export const getUsersBySearchTerm = async (searchTerm: string) => {
+  try {
+    const response = await axios.get(
+      `/api/users/getusersbysearchterm/${searchTerm}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user ${searchTerm}:`, error);
+    throw error;
+  }
+};

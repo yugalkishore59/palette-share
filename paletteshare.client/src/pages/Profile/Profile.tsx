@@ -55,20 +55,23 @@ export const Profile = () => {
       setIsMyProfile(profileOwner.username === user.username);
       setIsFollowed(profileOwner.followers?.includes(user.username));
 
-      setUserStats([
-        {
-          value: formatNumber(profileOwner.followers?.length),
-          label: userStatsEnum.FOLLOWERS,
-        },
-        {
-          value: formatNumber(profileOwner.following?.length),
-          label: userStatsEnum.FOLLOWING,
-        },
-        {
-          value: formatNumber(profileOwner.posts?.length),
-          label: userStatsEnum.POSTS,
-        },
-      ]);
+      // setting number of followers and following
+      setUserStats((prevStats) => {
+        return prevStats.map((stat) => {
+          if (stat.label === userStatsEnum.FOLLOWERS) {
+            return {
+              ...stat,
+              value: formatNumber(profileOwner.followers?.length),
+            };
+          } else if (stat.label === userStatsEnum.FOLLOWING) {
+            return {
+              ...stat,
+              value: formatNumber(profileOwner.following?.length),
+            };
+          }
+          return stat;
+        });
+      });
     }
   }, [profileOwner, user]);
 
@@ -81,6 +84,16 @@ export const Profile = () => {
 
         const posts = await getPostsByUsername(response.username);
         setPosts(posts);
+
+        // setting number of posts
+        setUserStats((prevStats) => {
+          return prevStats.map((stat) => {
+            if (stat.label === userStatsEnum.POSTS) {
+              return { ...stat, value: formatNumber(posts.length) };
+            }
+            return stat;
+          });
+        });
       } catch (error) {
         console.error(error);
       }

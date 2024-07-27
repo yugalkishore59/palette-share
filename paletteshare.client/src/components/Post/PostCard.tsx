@@ -33,7 +33,7 @@ import {
 
 import { PostProps } from "../../utils/interfaces";
 import { useFullscreen } from "@mantine/hooks";
-import { deletePost, updatePost, updateUser } from "../../utils/api";
+import { deletePost, updatePost } from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { deletePostSlice } from "../../redux/slices/postSlice";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -41,7 +41,6 @@ import { Link } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { updatePostSlice } from "../../redux/slices/postSlice";
 import { useEffect, useState } from "react";
-import { setUser } from "../../redux/slices/userSlice";
 
 export function PostCard({ post }: PostProps) {
   const dispatch = useDispatch();
@@ -88,23 +87,14 @@ export function PostCard({ post }: PostProps) {
     if (!isAuthenticated) {
       loginWithRedirect();
     }
-    if (post && user) {
+    if (post) {
       try {
         const idTokenClaims = await getIdTokenClaims();
         const idToken = idTokenClaims?.__raw ?? "";
-        const userId = user.id ?? "";
         const postId = post.id ?? "";
 
         deletePost(postId, idToken);
         dispatch(deletePostSlice(postId));
-
-        // remove the post from the logged in user
-        const updatedUser = {
-          ...user,
-          posts: user.posts.filter((_post) => _post !== postId),
-        };
-        dispatch(setUser(updatedUser));
-        updateUser(userId, updatedUser, idToken);
       } catch (error) {
         console.error("Error fetching token:", error);
       }

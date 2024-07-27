@@ -1,7 +1,7 @@
 import { Navbar } from "./components/Navigation/Navbar";
 import { Gallery } from "./pages/Gallery";
 import { Profile } from "./pages/Profile/Profile";
-import { Discover } from "./pages/Discover";
+import { Discover } from "./pages/Discover/Discover";
 import { Create } from "./pages/Create/Create";
 import { CreateProfile } from "./pages/CreateProfile/CreateProfile";
 import { VerifyEmail } from "./components/VerifyEmail/VerifyEmail";

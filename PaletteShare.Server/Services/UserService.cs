@@ -26,5 +26,12 @@ namespace PaletteShare.Server.Services
         public async Task UpdateUserAsync(string id, User user) => await _users.ReplaceOneAsync(u => u.Id == id, user);
 
         public async Task RemoveUserAsync(string id) => await _users.DeleteOneAsync(user => user.Id == id);
+
+        public async Task<List<User>> GetUsersBySearchTermAsync(string searchTerm)
+        {
+            var filter = Builders<User>.Filter.Regex(user => user.Username, new MongoDB.Bson.BsonRegularExpression(searchTerm, "i"));
+            return await _users.Find(filter).ToListAsync();
+        }
+
     }
 }
