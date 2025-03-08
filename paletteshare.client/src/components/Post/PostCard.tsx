@@ -14,6 +14,8 @@ import {
   //Stack,
   // Button,
   UnstyledButton,
+  TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import classes from "./PostCard.module.css";
 import {
@@ -29,9 +31,12 @@ import {
   IconArrowsMinimize,
   IconChevronRight,
   IconHeartFilled,
+  IconMessage,
+  IconMessageFilled,
+  IconPaint,
 } from "@tabler/icons-react";
 
-import { PostProps } from "../../utils/interfaces";
+import { CommentType, PostProps } from "../../utils/interfaces";
 import { useFullscreen } from "@mantine/hooks";
 import { deletePost, updatePost } from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,13 +50,19 @@ import { useEffect, useState } from "react";
 export function PostCard({
   post,
   opetionalDeleteFunc,
-  optionalLikeFunc,
+  optionalUpdatePostFunc,
 }: PostProps) {
   const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
   const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
   const { user } = useSelector((state: RootState) => state.user);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [comment, setComment] = useState<string>("");
+  const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false);
+
+  const COMMENT_LENGTH = 100;
+
+  const theme = useMantineTheme();
 
   useEffect(() => {
     setIsLiked(post.likes.includes(user?.username ?? ""));
@@ -123,14 +134,49 @@ export function PostCard({
         };
         dispatch(updatePostSlice(updatedPost));
         updatePost(postid, updatedPost, idToken);
-        optionalLikeFunc?.(updatedPost);
+        optionalUpdatePostFunc?.(updatedPost);
       } else {
         setIsLiked(true);
         const updatedPost = { ...post, likes: [...post.likes, user.username] };
         dispatch(updatePostSlice(updatedPost));
         updatePost(postid, updatedPost, idToken);
-        optionalLikeFunc?.(updatedPost);
+        optionalUpdatePostFunc?.(updatedPost);
       }
+    }
+  };
+
+  const handleComment = async () => {
+    if (comment.trim() === "") {
+      setComment("");
+      return;
+    }
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+    if (user?.username) {
+      const postid = post.id ?? "";
+      const idTokenClaims = await getIdTokenClaims();
+      const idToken = idTokenClaims?.__raw ?? "";
+
+      const newComment: CommentType = {
+        userId: user.id ?? "",
+        username: user.username,
+        content: comment,
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedPost = { ...post, comments: [...post.comments, newComment] };
+      dispatch(updatePostSlice(updatedPost));
+      updatePost(postid, updatedPost, idToken);
+      optionalUpdatePostFunc?.(updatedPost);
+
+      setComment("");
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleComment();
     }
   };
 
@@ -240,6 +286,11 @@ export function PostCard({
           )}
           <div>
             <Divider mb={"1rem"} />
+            <Text c="dimmed" size="sm" pr={"1rem"} pl={"1rem"} mb={"0.5rem"}>
+              {post.likes.length} {post.likes.length === 1 ? "like" : "likes"} ⦁{" "}
+              {post.comments.length}{" "}
+              {post.comments.length === 1 ? "comment" : "comments"}
+            </Text>
             <Group pl={"1rem"} pr={"0.5rem"}>
               <ActionIcon
                 variant="default"
@@ -253,11 +304,84 @@ export function PostCard({
                   <IconHeart className={classes.like} stroke={1.5} />
                 )}
               </ActionIcon>
-              <Text c="dimmed" size="sm" pr={"1rem"}>
-                {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
-              </Text>
+              <ActionIcon
+                variant="default"
+                radius="md"
+                size={36}
+                onClick={() => setIsCommentOpen((prev) => !prev)}
+              >
+                {isCommentOpen ? (
+                  <IconMessageFilled className={classes.comment} stroke={1.5} />
+                ) : (
+                  <IconMessage className={classes.comment} stroke={1.5} />
+                )}
+              </ActionIcon>
             </Group>
           </div>
+          {isCommentOpen && (
+            <div className={classes.commentContainer}>
+              <TextInput
+                type="text"
+                radius="md"
+                w={"100%"}
+                size="md"
+                placeholder="Share your thoughts..."
+                rightSectionWidth={42}
+                leftSection={
+                  <IconMessage
+                    style={{ width: rem(18), height: rem(18) }}
+                    stroke={1.5}
+                  />
+                }
+                rightSection={
+                  <ActionIcon
+                    size={32}
+                    radius="xl"
+                    color={theme.primaryColor}
+                    variant="filled"
+                    onClick={handleComment}
+                  >
+                    <IconPaint
+                      style={{ width: rem(18), height: rem(18) }}
+                      stroke={1.5}
+                    />
+                  </ActionIcon>
+                }
+                value={comment}
+                onChange={(event) => setComment(event.currentTarget.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <div className={classes.commentList}>
+                {[...post.comments]
+                  .sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )
+                  .map((comment, index) => (
+                    <div key={index} className={classes.comment}>
+                      <Link to={`/profile/${comment.username}`}>
+                        <UnstyledButton className={classes.user}>
+                          <Group>
+                            <div style={{ flex: 1 }}>
+                              <Text size="sm" fw={500}>
+                                {comment.username}
+                              </Text>
+                              <Text c="dimmed" size="xs">
+                                {formatUpdatedAt(post.updatedAt || "")}
+                              </Text>
+                            </div>
+                          </Group>
+                        </UnstyledButton>
+                      </Link>
+                      <Text size="sm" fw={500} p={"0.5rem"}>
+                        {comment.content}
+                      </Text>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </Card.Section>
     </Card>

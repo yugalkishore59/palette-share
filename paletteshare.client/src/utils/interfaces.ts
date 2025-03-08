@@ -22,7 +22,7 @@ export interface UserType {
 }
 
 export interface CommentType {
-  id: string;
+  id?: string;
   userId: string;
   username: string;
   content: string;
@@ -56,7 +56,7 @@ export interface PostsType {
 export interface PostProps {
   post: PostType;
   opetionalDeleteFunc?: (post: PostType) => void;
-  optionalLikeFunc?: (post: PostType) => void;
+  optionalUpdatePostFunc?: (post: PostType) => void;
 }
 
 export interface HeaderProps {

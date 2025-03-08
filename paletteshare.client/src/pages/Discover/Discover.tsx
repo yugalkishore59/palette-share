@@ -71,7 +71,7 @@ export const Discover = () => {
     );
   };
 
-  const optionalLikeFunc = (post: PostType) => {
+  const optionalUpdatePostFunc = (post: PostType) => {
     setSearchResultPosts((prevPosts) =>
       prevPosts.map((p) => (p.id === post.id ? post : p))
     );
@@ -131,7 +131,7 @@ export const Discover = () => {
                     key={index}
                     post={post}
                     opetionalDeleteFunc={opetionalDeleteFunc}
-                    optionalLikeFunc={optionalLikeFunc}
+                    optionalUpdatePostFunc={optionalUpdatePostFunc}
                   />
                 ))}
             </Stack>

@@ -183,7 +183,7 @@ export const Profile = () => {
     setPosts((prevPosts) => prevPosts.filter((_post) => _post.id !== post.id));
   };
 
-  const optionalLikeFunc = (post: PostType) => {
+  const optionalUpdatePostFunc = (post: PostType) => {
     setPosts((prevPosts) =>
       prevPosts.map((p) => (p.id === post.id ? post : p))
     );
@@ -246,7 +246,7 @@ export const Profile = () => {
               key={index}
               post={post}
               opetionalDeleteFunc={opetionalDeleteFunc}
-              optionalLikeFunc={optionalLikeFunc}
+              optionalUpdatePostFunc={optionalUpdatePostFunc}
             />
           ))}
       </Stack>
