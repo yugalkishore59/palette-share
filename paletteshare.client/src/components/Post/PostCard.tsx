@@ -46,6 +46,7 @@ import { Link } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { updatePostSlice } from "../../redux/slices/postSlice";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export function PostCard({
   post,
@@ -59,8 +60,6 @@ export function PostCard({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false);
-
-  const COMMENT_LENGTH = 100;
 
   const theme = useMantineTheme();
 
@@ -159,6 +158,7 @@ export function PostCard({
       const idToken = idTokenClaims?.__raw ?? "";
 
       const newComment: CommentType = {
+        id: uuidv4(),
         userId: user.id ?? "",
         username: user.username,
         content: comment,
@@ -177,6 +177,25 @@ export function PostCard({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleComment();
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+    if (user?.username) {
+      const postid = post.id ?? "";
+      const idTokenClaims = await getIdTokenClaims();
+      const idToken = idTokenClaims?.__raw ?? "";
+
+      const updatedPost = {
+        ...post,
+        comments: post.comments.filter((comment) => comment.id !== commentId),
+      };
+      dispatch(updatePostSlice(updatedPost));
+      updatePost(postid, updatedPost, idToken);
+      optionalUpdatePostFunc?.(updatedPost);
     }
   };
 
@@ -368,7 +387,7 @@ export function PostCard({
                                 {comment.username}
                               </Text>
                               <Text c="dimmed" size="xs">
-                                {formatUpdatedAt(post.updatedAt || "")}
+                                {formatUpdatedAt(comment.createdAt || "")}
                               </Text>
                             </div>
                           </Group>
@@ -377,6 +396,17 @@ export function PostCard({
                       <Text size="sm" fw={500} p={"0.5rem"}>
                         {comment.content}
                       </Text>
+                      {comment.username === user?.username && (
+                        <ActionIcon
+                          className={classes.deleteCommentButton}
+                          size={32}
+                          color="red"
+                          variant="subtle"
+                          onClick={() => handleDeleteComment(comment.id || "")}
+                        >
+                          <IconTrash stroke={1.5} />
+                        </ActionIcon>
+                      )}
                     </div>
                   ))}
               </div>

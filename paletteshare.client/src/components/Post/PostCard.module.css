@@ -77,3 +77,8 @@
   gap: 0.5rem;
   align-items: flex-start;
 }
+
+.deleteCommentButton {
+  margin: 0.5rem;
+  margin-left: auto;
+}

@@ -50,6 +50,9 @@ namespace PaletteShare.Server.Models
     [BsonIgnoreExtraElements]
     public class Comment
     {
+        [BsonElement("id")]
+        public string Id { get; set; } = string.Empty;
+
         [BsonElement("userId")]
         public string UserId { get; set; } = string.Empty;
 
