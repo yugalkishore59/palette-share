@@ -1,2 +1,1 @@
-# pallete-share
- 
+# palette-share

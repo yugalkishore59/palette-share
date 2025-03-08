@@ -121,7 +121,7 @@ export function Create() {
           </Input.Wrapper>
 
           <Group justify="flex-end">
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleSubmit}>Post</Button>
           </Group>
         </Fieldset>
       ) : (

@@ -87,7 +87,7 @@ export function Navbar() {
         <nav className={classes.navbar}>
           <div className={classes.navbarMain}>
             <Group className={classes.header} justify="space-between">
-              <Title order={3}>PalletteShare</Title>
+              <Title order={3}>PaletteShare</Title>
               <ActionIcon
                 onClick={() =>
                   setColorScheme(

@@ -143,7 +143,7 @@ export const CreateProfile = () => {
             >
               Log Out
             </Button>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleSubmit}>Join</Button>
           </Group>
         </Stack>
       </Fieldset>

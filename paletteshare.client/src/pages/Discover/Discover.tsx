@@ -7,7 +7,7 @@ import {
   Group,
   Loader,
   Stack,
-  Table,
+  //Table,
   Text,
   TextInput,
   UnstyledButton,
@@ -82,10 +82,11 @@ export const Discover = () => {
       {isAuthenticated ? (
         <>
           <TextInput
+            type="search"
             radius="md"
             w={"100%"}
             size="md"
-            placeholder="Search questions"
+            placeholder="Looking for something?"
             rightSectionWidth={42}
             leftSection={
               <IconSearch
