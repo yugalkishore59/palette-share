@@ -102,6 +102,17 @@ export const Profile = () => {
     getUserDetails();
   }, [location]);
 
+  useEffect(() => {
+    setUserStats((prevStats) => {
+      return prevStats.map((stat) => {
+        if (stat.label === userStatsEnum.POSTS) {
+          return { ...stat, value: formatNumber(posts.length) };
+        }
+        return stat;
+      });
+    });
+  }, [posts]);
+
   const handleFollow = async () => {
     if (!profileOwner) return;
     if (!isAuthenticated) {
@@ -167,6 +178,11 @@ export const Profile = () => {
       </Text>
     </div>
   ));
+
+  const opetionalDeleteFunc = (post: PostType) => {
+    setPosts((prevPosts) => prevPosts.filter((_post) => _post.id !== post.id));
+  };
+
   return (
     <Container size="md" p="xs">
       <Card
@@ -219,7 +235,13 @@ export const Profile = () => {
       </Card>
       <Stack>
         {posts.length > 0 &&
-          posts.map((post, index) => <PostCard key={index} post={post} />)}
+          posts.map((post, index) => (
+            <PostCard
+              key={index}
+              post={post}
+              opetionalDeleteFunc={opetionalDeleteFunc}
+            />
+          ))}
       </Stack>
     </Container>
   );

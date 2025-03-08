@@ -5,6 +5,7 @@ import {
   Button,
   Textarea,
   TagsInput,
+  Input,
   //Select,
 } from "@mantine/core";
 import classes from "./Create.module.css";
@@ -23,11 +24,20 @@ export function Create() {
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [license, setLicense] = useState<string>("None");
-  const [imageUrlBase64, setImageUrlBase64] = useState<string>();
+  const [imageUrlBase64, setImageUrlBase64] = useState<string>("");
   const { user } = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async () => {
     if (isAuthenticated) {
+      if (description.trim() === "") {
+        setDescription("");
+        window.alert("Please enter a description.");
+        return;
+      }
+      if (imageUrlBase64.trim() === "") {
+        window.alert("Please upload an image.");
+        return;
+      }
       try {
         const idTokenClaims = await getIdTokenClaims();
         const idToken = idTokenClaims?.__raw ?? "";
@@ -63,6 +73,7 @@ export function Create() {
         setDescription("");
         setTags([]);
         setLicense("None");
+        setImageUrlBase64("");
         window.alert("submitted");
       } catch (error) {
         console.error("Error fetching token:", error);
@@ -80,6 +91,7 @@ export function Create() {
         >
           <Textarea
             label="Description"
+            required
             placeholder="Whats on your mind?"
             autosize
             minRows={4}
@@ -96,7 +108,12 @@ export function Create() {
             value={tags}
             onChange={setTags}
           />
-          <DropzoneButton setImageUrlBase64={setImageUrlBase64} />
+          <Input.Wrapper label="Upload Image" required>
+            <DropzoneButton
+              imageUrlBase64={imageUrlBase64}
+              setImageUrlBase64={setImageUrlBase64}
+            />
+          </Input.Wrapper>
 
           <Group justify="flex-end">
             <Button onClick={handleSubmit}>Submit</Button>

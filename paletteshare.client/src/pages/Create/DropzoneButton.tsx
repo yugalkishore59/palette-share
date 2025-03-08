@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   SimpleGrid,
   Image,
@@ -13,19 +13,24 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import classes from "./DropzoneButton.module.css";
 import { DropzoneButtonProps } from "../../utils/interfaces";
 
-export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
+export function DropzoneButton({
+  imageUrlBase64,
+  setImageUrlBase64,
+}: DropzoneButtonProps) {
   const theme = useMantineTheme();
   const openRef = useRef<() => void>(null);
-  const [files, setFiles] = useState<FileWithPath[]>([]);
+  const [files, setFiles] = useState<FileWithPath[]>([]); // may support multiple images in future
 
-  const handleRemoveImage = (index: number) => {
-    setFiles((prevFiles) => {
-      const updatedFiles = prevFiles.filter((_, i) => i !== index);
-      if (updatedFiles.length === 0) {
-        setImageUrlBase64(""); // Clear base64 when no images remain
-      }
-      return updatedFiles;
-    });
+  const handleRemoveImage = () => {
+    setFiles([]);
+    setImageUrlBase64("");
+    // setFiles((prevFiles) => {
+    //   const updatedFiles = prevFiles.filter((_, i) => i !== index);
+    //   if (updatedFiles.length === 0) {
+    //     setImageUrlBase64(""); // Clear base64 when no images remain
+    //   }
+    //   return updatedFiles;
+    // });
   };
 
   const handleFileChange = (files: FileWithPath[]) => {
@@ -51,12 +56,18 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
     );
   });
 
+  useEffect(() => {
+    if (imageUrlBase64 === "") {
+      setFiles([]);
+    }
+  }, [imageUrlBase64]);
+
   return (
     <>
       <div className={classes.wrapper}>
-        <label htmlFor="dropzone" className={classes.label}>
-          Upload Image
-        </label>
+        {/* <label htmlFor="dropzone" className={classes.label}>
+          Upload Image <span className={classes.required}>*</span>
+        </label> */}
         <Dropzone
           openRef={openRef}
           onDrop={handleFileChange}
@@ -117,7 +128,7 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
               size="xs"
               color="red"
               mt="xs"
-              onClick={() => handleRemoveImage(index)}
+              onClick={() => handleRemoveImage()}
             >
               Remove
             </Button>

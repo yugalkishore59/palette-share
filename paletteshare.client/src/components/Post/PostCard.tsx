@@ -42,7 +42,7 @@ import { RootState } from "../../redux/store";
 import { updatePostSlice } from "../../redux/slices/postSlice";
 import { useEffect, useState } from "react";
 
-export function PostCard({ post }: PostProps) {
+export function PostCard({ post, opetionalDeleteFunc }: PostProps) {
   const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
   const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
@@ -95,6 +95,7 @@ export function PostCard({ post }: PostProps) {
 
         deletePost(postId, idToken);
         dispatch(deletePostSlice(postId));
+        opetionalDeleteFunc?.(post);
       } catch (error) {
         console.error("Error fetching token:", error);
       }

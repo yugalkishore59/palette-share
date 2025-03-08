@@ -2,6 +2,10 @@
   font-size: 14px;
 }
 
+.required {
+  color: red;
+}
+
 .wrapper {
   position: relative;
   margin-bottom: rem(30px);

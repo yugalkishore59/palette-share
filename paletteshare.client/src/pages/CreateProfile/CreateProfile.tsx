@@ -82,7 +82,13 @@ export const CreateProfile = () => {
     }
   };
   return (
-    <Container size="sm" p="xs" h={"100%"} className={classes.container}>
+    <Container
+      size="md"
+      p="xs"
+      h={"100%"}
+      w={"100%"}
+      className={classes.container}
+    >
       <Fieldset legend="Create Profile" variant="filled">
         <Stack>
           <Input.Wrapper withAsterisk label="Name" error={nameError}>
@@ -118,7 +124,10 @@ export const CreateProfile = () => {
           />
 
           <Input.Wrapper label="Profile Picture">
-            <DropzoneButton setImageUrlBase64={setImageUrlBase64} />
+            <DropzoneButton
+              imageUrlBase64={imageUrlBase64}
+              setImageUrlBase64={setImageUrlBase64}
+            />
           </Input.Wrapper>
 
           <Group justify="flex-end" mt="md">

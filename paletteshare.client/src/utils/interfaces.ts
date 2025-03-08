@@ -53,6 +53,7 @@ export interface PostsType {
 
 export interface PostProps {
   post: PostType;
+  opetionalDeleteFunc?: (post: PostType) => void;
 }
 
 export interface HeaderProps {
@@ -64,5 +65,6 @@ export interface GalleryProps {
 }
 
 export interface DropzoneButtonProps {
+  imageUrlBase64: string;
   setImageUrlBase64: (imageUrlBase64: string) => void;
 }
