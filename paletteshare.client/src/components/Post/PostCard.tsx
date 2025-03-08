@@ -7,11 +7,11 @@ import {
   ActionIcon,
   Menu,
   rem,
-  Grid,
+  //Grid,
   Avatar,
   Divider,
   // Flex,
-  Stack,
+  //Stack,
   // Button,
   UnstyledButton,
 } from "@mantine/core";
@@ -186,87 +186,72 @@ export function PostCard({ post }: PostProps) {
         </Group>
       </Card.Section>
       <Card.Section>
-        <Grid gutter={0}>
-          <Grid.Col
-            span={{ base: 12, lg: 6 }}
-            className={classes.ImageContainer}
-          >
-            <Image
-              ref={ref}
-              src={post.imageUrl}
-              alt={`${post.username}'s post`}
-              h={420}
-              fit="contain"
-              fallbackSrc="https://placehold.co/600x400?text=Placeholder"
-            />
-            <ActionIcon
-              onClick={toggle}
-              variant="default"
-              size={36}
-              aria-label="Toggle color scheme"
-              className={classes.fullscreenButton}
-              bg={"rgba(0,0,0,0.1)"}
-              m={"xs"}
-            >
-              {fullscreen ? (
-                <IconArrowsMinimize stroke={1.5} />
-              ) : (
-                <IconArrowsMaximize stroke={1.5} />
-              )}
-            </ActionIcon>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, lg: 6 }} p={"xs"}>
-            <Stack gap={0} justify="space-between" h={"100%"}>
-              <Text fz="sm" lineClamp={12}>
-                {post.description}
+        <div className={classes.postContainer}>
+          {post.imageUrl && (
+            <div className={classes.ImageContainer}>
+              <Image
+                ref={ref}
+                src={post.imageUrl}
+                alt={`${post.username}'s post`}
+                mah={600}
+                fit="contain"
+                fallbackSrc="https://placehold.co/600x400?text=Placeholder"
+              />
+              <ActionIcon
+                onClick={toggle}
+                variant="default"
+                size={36}
+                aria-label="Toggle color scheme"
+                className={classes.fullscreenButton}
+                bg={"rgba(0,0,0,0.1)"}
+                m={"xs"}
+              >
+                {fullscreen ? (
+                  <IconArrowsMinimize stroke={1.5} />
+                ) : (
+                  <IconArrowsMaximize stroke={1.5} />
+                )}
+              </ActionIcon>
+            </div>
+          )}
+          <Text fz="sm" lineClamp={12} pl={"1rem"} pr={"1rem"} mt={"0.5rem"}>
+            {post.description}
+          </Text>
+          {post.tags.length > 0 && (
+            <Group gap={4} pl={"1rem"} pr={"1rem"}>
+              {post.tags.map((tag, index) => (
+                <Badge
+                  size="sm"
+                  variant="light"
+                  leftSection={<IconHash size={14} />}
+                  key={index}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </Group>
+          )}
+          <div>
+            <Divider mb={"1rem"} />
+            <Group pl={"1rem"} pr={"0.5rem"}>
+              <ActionIcon
+                variant="default"
+                radius="md"
+                size={36}
+                onClick={handleLike}
+              >
+                {isLiked ? (
+                  <IconHeartFilled className={classes.like} stroke={1.5} />
+                ) : (
+                  <IconHeart className={classes.like} stroke={1.5} />
+                )}
+              </ActionIcon>
+              <Text c="dimmed" size="sm" pr={"1rem"}>
+                {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
               </Text>
-              <div>
-                <Group gap={4} pt={"xs"}>
-                  {post.tags.map((tag, index) => (
-                    <Badge
-                      size="sm"
-                      variant="light"
-                      leftSection={<IconHash size={14} />}
-                      key={index}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </Group>
-                <Divider my="md" />
-                <Text c="dimmed" size="sm">
-                  {post.likes.length}{" "}
-                  {post.likes.length === 1 ? "like" : "likes"}
-                  {/* • {post.comments.length} comments */}
-                </Text>
-
-                <Group mt="xs">
-                  <ActionIcon
-                    variant="default"
-                    radius="md"
-                    size={36}
-                    onClick={handleLike}
-                  >
-                    {isLiked ? (
-                      <IconHeartFilled className={classes.like} stroke={1.5} />
-                    ) : (
-                      <IconHeart className={classes.like} stroke={1.5} />
-                    )}
-                  </ActionIcon>
-                  {/* <ActionIcon variant="default" radius="md" size={36}>
-                    <IconMessageCircle stroke={1.5} />
-                  </ActionIcon>
-                  <ActionIcon variant="default" radius="md" size={36}>
-                    <IconShare stroke={1.5} />
-                  </ActionIcon>
-                  <ActionIcon variant="default" radius="md" size={36}>
-                    <IconDownload stroke={1.5} />
-                  </ActionIcon> */}
-                </Group>
-              </div>
-            </Stack>
-          </Grid.Col>
-        </Grid>
+            </Group>
+          </div>
+        </div>
       </Card.Section>
     </Card>
   );

@@ -18,6 +18,16 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
   const openRef = useRef<() => void>(null);
   const [files, setFiles] = useState<FileWithPath[]>([]);
 
+  const handleRemoveImage = (index: number) => {
+    setFiles((prevFiles) => {
+      const updatedFiles = prevFiles.filter((_, i) => i !== index);
+      if (updatedFiles.length === 0) {
+        setImageUrlBase64(""); // Clear base64 when no images remain
+      }
+      return updatedFiles;
+    });
+  };
+
   const handleFileChange = (files: FileWithPath[]) => {
     setFiles(files);
     const file = files?.[0];
@@ -44,6 +54,9 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
   return (
     <>
       <div className={classes.wrapper}>
+        <label htmlFor="dropzone" className={classes.label}>
+          Upload Image
+        </label>
         <Dropzone
           openRef={openRef}
           onDrop={handleFileChange}
@@ -51,6 +64,7 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
           radius="md"
           accept={IMAGE_MIME_TYPE}
           maxSize={30 * 1024 ** 2}
+          multiple={false}
         >
           <div style={{ pointerEvents: "none" }}>
             <Group justify="center">
@@ -77,13 +91,12 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
             </Group>
 
             <Text ta="center" fw={700} fz="lg" mt="xl">
-              <Dropzone.Accept>Drop files here</Dropzone.Accept>
-              <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
-              <Dropzone.Idle>Upload resume</Dropzone.Idle>
+              <Dropzone.Accept>Drop image here</Dropzone.Accept>
+              <Dropzone.Reject>Image less than 30mb</Dropzone.Reject>
+              <Dropzone.Idle>Upload Image</Dropzone.Idle>
             </Text>
             <Text ta="center" fz="sm" mt="xs" c="dimmed">
-              Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-              <i>.pdf</i> files that are less than 30mb in size.
+              Image should be less than 30mb
             </Text>
           </div>
         </Dropzone>
@@ -93,11 +106,23 @@ export function DropzoneButton({ setImageUrlBase64 }: DropzoneButtonProps) {
           radius="xl"
           onClick={() => openRef.current?.()}
         >
-          Select files
+          Browse device
         </Button>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 4 }} mt={previews.length > 0 ? "xl" : 0}>
-        {previews}
+        {previews.map((preview, index) => (
+          <div key={index} className={classes.previewWrapper}>
+            {preview}
+            <Button
+              size="xs"
+              color="red"
+              mt="xs"
+              onClick={() => handleRemoveImage(index)}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
       </SimpleGrid>
     </>
   );

@@ -39,6 +39,13 @@
   right: 0;
 }
 
+.postContainer {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+  gap: 0.5rem;
+}
+
 .user {
   padding: var(--mantine-spacing-xs) !important;
   color: light-dark(

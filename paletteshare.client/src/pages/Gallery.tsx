@@ -56,7 +56,7 @@ export const Gallery = ({ scrollableRef }: GalleryProps) => {
   }, [scrollableRef]);
 
   return (
-    <Container size="lg" p="xs">
+    <Container size="sm" p="xs">
       <Stack>
         {posts.length > 0 &&
           posts.map((post, index) => <PostCard key={index} post={post} />)}

@@ -16,7 +16,7 @@ import { GradientSegmentedControl } from "../../components/Discover/GradientSegm
 import classes from "./Discover.module.css";
 import { useState } from "react";
 import { getUsersBySearchTerm } from "../../utils/api";
-import { PostType, UserType } from "../../utils/interfaces";
+import {  UserType } from "../../utils/interfaces";
 import { Link } from "react-router-dom";
 
 export const Discover = () => {
@@ -24,8 +24,8 @@ export const Discover = () => {
   const theme = useMantineTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResultsUsers, setSearchResultsUsers] = useState<UserType[]>([]);
-  const [searchResultsPosts, setSearchResultsPosts] = useState<PostType[]>([]);
-  const [searchResultsHashTags, setSearchResultsHashTags] = useState([]);
+  //const [searchResultsPosts, setSearchResultsPosts] = useState<PostType[]>([]);
+  //const [searchResultsHashTags, setSearchResultsHashTags] = useState([]);
 
   const handleSearch = async () => {
     setSearchTerm("");

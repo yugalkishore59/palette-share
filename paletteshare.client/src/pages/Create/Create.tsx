@@ -5,9 +5,9 @@ import {
   Button,
   Textarea,
   TagsInput,
-  Select,
+  //Select,
 } from "@mantine/core";
-// import classes from "./Create.module.css";
+import classes from "./Create.module.css";
 import { DropzoneButton } from "./DropzoneButton";
 import { useState } from "react";
 import { createPost } from "../../utils/api";
@@ -73,7 +73,11 @@ export function Create() {
   return (
     <Container size="lg" p="xs" h={"100%"}>
       {isAuthenticated ? (
-        <Fieldset legend="Create new post" variant="filled">
+        <Fieldset
+          legend="Create new post"
+          variant="filled"
+          className={classes.fieldset}
+        >
           <Textarea
             label="Description"
             placeholder="Whats on your mind?"
@@ -92,20 +96,9 @@ export function Create() {
             value={tags}
             onChange={setTags}
           />
-          <Select
-            label="License"
-            placeholder="Pick license"
-            data={["None", "MIT", "CC BY 4.0", "GFDL", "CC BY-SA 4.0"]}
-            searchable
-            nothingFoundMessage="Nothing found..."
-            allowDeselect={false}
-            checkIconPosition="right"
-            value={license}
-            onOptionSubmit={setLicense}
-          />
           <DropzoneButton setImageUrlBase64={setImageUrlBase64} />
 
-          <Group justify="flex-end" mt="md">
+          <Group justify="flex-end">
             <Button onClick={handleSubmit}>Submit</Button>
           </Group>
         </Fieldset>
