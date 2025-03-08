@@ -116,57 +116,69 @@ export const Discover = () => {
           {isLoading && <Loader m={"xl"} />}
           {(filter === DiscoverFilters.POSTS ||
             filter === DiscoverFilters.HASH_TAGS) && (
-            <Stack>
-              {searchResultPosts
-                .filter((post) => {
-                  if (filter === DiscoverFilters.HASH_TAGS) {
-                    return post.tags.some((tag) =>
-                      tag.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
-                  }
-                  return true;
-                })
-                .map((post, index) => (
-                  <PostCard
-                    key={index}
-                    post={post}
-                    opetionalDeleteFunc={opetionalDeleteFunc}
-                    optionalUpdatePostFunc={optionalUpdatePostFunc}
-                  />
-                ))}
-            </Stack>
+            <>
+              {searchResultPosts.length > 0 ? (
+                <Stack w={"100%"}>
+                  {searchResultPosts
+                    .filter((post) => {
+                      if (filter === DiscoverFilters.HASH_TAGS) {
+                        return post.tags.some((tag) =>
+                          tag.toLowerCase().includes(searchTerm.toLowerCase())
+                        );
+                      }
+                      return true;
+                    })
+                    .map((post, index) => (
+                      <PostCard
+                        key={index}
+                        post={post}
+                        opetionalDeleteFunc={opetionalDeleteFunc}
+                        optionalUpdatePostFunc={optionalUpdatePostFunc}
+                      />
+                    ))}
+                </Stack>
+              ) : (
+                <>{!isLoading && <>Hmm… nothing here.</>}</>
+              )}
+            </>
           )}
           {filter === DiscoverFilters.PEOPLE && (
-            <div className={classes.userContainer}>
-              {searchResultUsers.map((user, index) => (
-                <Group justify="space-between" key={index}>
-                  <Link
-                    to={`/profile/${user.username}`}
-                    className={classes.userProfileLink}
-                  >
-                    <UnstyledButton className={classes.user}>
-                      <Group>
-                        <Avatar src={user.profilePictureUrl} radius="xl" />
+            <>
+              {searchResultUsers.length > 0 ? (
+                <div className={classes.userContainer}>
+                  {searchResultUsers.map((user, index) => (
+                    <Group justify="space-between" key={index}>
+                      <Link
+                        to={`/profile/${user.username}`}
+                        className={classes.userProfileLink}
+                      >
+                        <UnstyledButton className={classes.user}>
+                          <Group>
+                            <Avatar src={user.profilePictureUrl} radius="xl" />
 
-                        <div style={{ flex: 1 }}>
-                          <Text size="sm" fw={500}>
-                            {user.name}
-                          </Text>
-                          <Text c="dimmed" size="xs">
-                            {user.username}
-                          </Text>
-                        </div>
+                            <div style={{ flex: 1 }}>
+                              <Text size="sm" fw={500}>
+                                {user.name}
+                              </Text>
+                              <Text c="dimmed" size="xs">
+                                {user.username}
+                              </Text>
+                            </div>
 
-                        <IconChevronRight
-                          style={{ width: rem(14), height: rem(14) }}
-                          stroke={1.5}
-                        />
-                      </Group>
-                    </UnstyledButton>
-                  </Link>
-                </Group>
-              ))}
-            </div>
+                            <IconChevronRight
+                              style={{ width: rem(14), height: rem(14) }}
+                              stroke={1.5}
+                            />
+                          </Group>
+                        </UnstyledButton>
+                      </Link>
+                    </Group>
+                  ))}
+                </div>
+              ) : (
+                <>{!isLoading && <>Hmm… nothing here.</>}</>
+              )}
+            </>
           )}
         </>
       ) : (
