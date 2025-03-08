@@ -1,3 +1,5 @@
+import { DiscoverFilters } from "./enums";
+
 export interface UserType {
   id?: string;
   name: string;
@@ -54,6 +56,7 @@ export interface PostsType {
 export interface PostProps {
   post: PostType;
   opetionalDeleteFunc?: (post: PostType) => void;
+  optionalLikeFunc?: (post: PostType) => void;
 }
 
 export interface HeaderProps {
@@ -67,4 +70,9 @@ export interface GalleryProps {
 export interface DropzoneButtonProps {
   imageUrlBase64: string;
   setImageUrlBase64: (imageUrlBase64: string) => void;
+}
+
+export interface FilterProps {
+  filter: string;
+  setFilter: (filter: DiscoverFilters) => void;
 }

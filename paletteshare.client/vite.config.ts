@@ -108,6 +108,10 @@ export default defineConfig({
         target,
         secure: false,
       },
+      "^/api/posts": {
+        target,
+        secure: false,
+      },
     },
     port: 5173,
     https: {

@@ -31,5 +31,15 @@ namespace PaletteShare.Server.Services
         public async Task UpdatePostAsync(string id, Post post) => await _posts.ReplaceOneAsync(p => p.Id == id, post);
 
         public async Task RemovePostAsync(string id) => await _posts.DeleteOneAsync(post => post.Id == id);
+
+        public async Task<List<Post>> GetPostsBySearchTermAsync(string searchTerm)
+        {
+            var regex = new MongoDB.Bson.BsonRegularExpression(searchTerm, "i");
+            var filter = Builders<Post>.Filter.Or(
+                Builders<Post>.Filter.Regex(post => post.Description, regex),
+                Builders<Post>.Filter.Regex("Tags", regex)
+            );
+            return await _posts.Find(filter).SortByDescending(post => post.CreatedAt).ToListAsync();
+        }
     }
 }

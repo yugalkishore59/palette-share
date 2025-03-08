@@ -5,32 +5,58 @@ import {
   Avatar,
   Container,
   Group,
+  Loader,
+  Stack,
   Table,
   Text,
   TextInput,
+  UnstyledButton,
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { IconArrowRight, IconSearch } from "@tabler/icons-react";
+import {
+  IconArrowRight,
+  IconChevronRight,
+  IconSearch,
+} from "@tabler/icons-react";
 import { GradientSegmentedControl } from "../../components/Discover/GradientSegmentedControl";
 import classes from "./Discover.module.css";
 import { useState } from "react";
-import { getUsersBySearchTerm } from "../../utils/api";
-import {  UserType } from "../../utils/interfaces";
+import { getPostsBySearchTerm, getUsersBySearchTerm } from "../../utils/api";
+import { PostType, UserType } from "../../utils/interfaces";
 import { Link } from "react-router-dom";
+import { DiscoverFilters } from "../../utils/enums";
+import { PostCard } from "../../components/Post/PostCard";
 
 export const Discover = () => {
   const { isAuthenticated } = useAuth0();
   const theme = useMantineTheme();
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResultsUsers, setSearchResultsUsers] = useState<UserType[]>([]);
+  const [searchResultUsers, setSearchResultUsers] = useState<UserType[]>([]);
+  const [searchResultPosts, setSearchResultPosts] = useState<PostType[]>([]);
+  const [filter, setFilter] = useState<DiscoverFilters>(DiscoverFilters.POSTS);
+  const [isLoading, setIsLoading] = useState(false);
   //const [searchResultsPosts, setSearchResultsPosts] = useState<PostType[]>([]);
   //const [searchResultsHashTags, setSearchResultsHashTags] = useState([]);
 
   const handleSearch = async () => {
-    setSearchTerm("");
-    const users = await getUsersBySearchTerm(searchTerm);
-    setSearchResultsUsers(users);
+    if (searchTerm.trim() === "") {
+      setSearchTerm("");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const [users, posts] = await Promise.all([
+        getUsersBySearchTerm(searchTerm),
+        getPostsBySearchTerm(searchTerm),
+      ]);
+
+      setSearchResultUsers(users);
+      setSearchResultPosts(posts);
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,25 +65,17 @@ export const Discover = () => {
     }
   };
 
-  const rows = searchResultsUsers.map((_user, index) => (
-    <Table.Tr key={index} className={classes.tr}>
-      <Link to={`/profile/${_user.username}`} className={classes.unstyledLink}>
-        <Table.Td>
-          <Group gap="sm">
-            <Avatar size={40} src={_user.profilePictureUrl} radius={40} />
-            <div>
-              <Text fz="sm" fw={500}>
-                {_user.name}
-              </Text>
-              <Text c="dimmed" fz="xs">
-                {_user.username}
-              </Text>
-            </div>
-          </Group>
-        </Table.Td>
-      </Link>
-    </Table.Tr>
-  ));
+  const opetionalDeleteFunc = (post: PostType) => {
+    setSearchResultPosts((prevPosts) =>
+      prevPosts.filter((_post) => _post.id !== post.id)
+    );
+  };
+
+  const optionalLikeFunc = (post: PostType) => {
+    setSearchResultPosts((prevPosts) =>
+      prevPosts.map((p) => (p.id === post.id ? post : p))
+    );
+  };
 
   return (
     <Container size="md" p="xs" h={"100%"} className={classes.container}>
@@ -93,12 +111,62 @@ export const Discover = () => {
             onChange={(event) => setSearchTerm(event.currentTarget.value)}
             onKeyDown={handleKeyDown}
           />
-          <GradientSegmentedControl />
-          <Table.ScrollContainer minWidth={800}>
-            <Table verticalSpacing="md">
-              <Table.Tbody>{rows}</Table.Tbody>
-            </Table>
-          </Table.ScrollContainer>
+          <GradientSegmentedControl filter={filter} setFilter={setFilter} />
+          {isLoading && <Loader m={"xl"} />}
+          {(filter === DiscoverFilters.POSTS ||
+            filter === DiscoverFilters.HASH_TAGS) && (
+            <Stack>
+              {searchResultPosts
+                .filter((post) => {
+                  if (filter === DiscoverFilters.HASH_TAGS) {
+                    return post.tags.some((tag) =>
+                      tag.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                  }
+                  return true;
+                })
+                .map((post, index) => (
+                  <PostCard
+                    key={index}
+                    post={post}
+                    opetionalDeleteFunc={opetionalDeleteFunc}
+                    optionalLikeFunc={optionalLikeFunc}
+                  />
+                ))}
+            </Stack>
+          )}
+          {filter === DiscoverFilters.PEOPLE && (
+            <div className={classes.userContainer}>
+              {searchResultUsers.map((user, index) => (
+                <Group justify="space-between" key={index}>
+                  <Link
+                    to={`/profile/${user.username}`}
+                    className={classes.userProfileLink}
+                  >
+                    <UnstyledButton className={classes.user}>
+                      <Group>
+                        <Avatar src={user.profilePictureUrl} radius="xl" />
+
+                        <div style={{ flex: 1 }}>
+                          <Text size="sm" fw={500}>
+                            {user.name}
+                          </Text>
+                          <Text c="dimmed" size="xs">
+                            {user.username}
+                          </Text>
+                        </div>
+
+                        <IconChevronRight
+                          style={{ width: rem(14), height: rem(14) }}
+                          stroke={1.5}
+                        />
+                      </Group>
+                    </UnstyledButton>
+                  </Link>
+                </Group>
+              ))}
+            </div>
+          )}
         </>
       ) : (
         <SingInFirst />

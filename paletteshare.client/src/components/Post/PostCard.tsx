@@ -18,7 +18,7 @@ import {
 import classes from "./PostCard.module.css";
 import {
   IconDots,
-  IconEdit,
+  // IconEdit,
   IconHash,
   IconTrash,
   IconHeart,
@@ -42,7 +42,11 @@ import { RootState } from "../../redux/store";
 import { updatePostSlice } from "../../redux/slices/postSlice";
 import { useEffect, useState } from "react";
 
-export function PostCard({ post, opetionalDeleteFunc }: PostProps) {
+export function PostCard({
+  post,
+  opetionalDeleteFunc,
+  optionalLikeFunc,
+}: PostProps) {
   const dispatch = useDispatch();
   const { ref, toggle, fullscreen } = useFullscreen();
   const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
@@ -119,11 +123,13 @@ export function PostCard({ post, opetionalDeleteFunc }: PostProps) {
         };
         dispatch(updatePostSlice(updatedPost));
         updatePost(postid, updatedPost, idToken);
+        optionalLikeFunc?.(updatedPost);
       } else {
         setIsLiked(true);
         const updatedPost = { ...post, likes: [...post.likes, user.username] };
         dispatch(updatePostSlice(updatedPost));
         updatePost(postid, updatedPost, idToken);
+        optionalLikeFunc?.(updatedPost);
       }
     }
   };

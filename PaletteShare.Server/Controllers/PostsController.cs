@@ -122,5 +122,19 @@ namespace PaletteShare.Server.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpGet("getpostsbysearchterm/{searchTerm}")]
+        public async Task<ActionResult<List<Post>>> GetpostsBySearchTerm(string searchTerm)
+        {
+            try
+            {
+                var posts = await _postService.GetPostsBySearchTermAsync(searchTerm);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

@@ -183,6 +183,12 @@ export const Profile = () => {
     setPosts((prevPosts) => prevPosts.filter((_post) => _post.id !== post.id));
   };
 
+  const optionalLikeFunc = (post: PostType) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((p) => (p.id === post.id ? post : p))
+    );
+  };
+
   return (
     <Container size="md" p="xs">
       <Card
@@ -240,6 +246,7 @@ export const Profile = () => {
               key={index}
               post={post}
               opetionalDeleteFunc={opetionalDeleteFunc}
+              optionalLikeFunc={optionalLikeFunc}
             />
           ))}
       </Stack>

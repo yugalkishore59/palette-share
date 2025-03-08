@@ -31,3 +31,7 @@
     }
   }
 }
+
+.segmentedControl {
+  min-height: fit-content;
+}

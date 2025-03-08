@@ -167,3 +167,15 @@ export const getUsersBySearchTerm = async (searchTerm: string) => {
     throw error;
   }
 };
+
+export const getPostsBySearchTerm = async (searchTerm: string) => {
+  try {
+    const response = await axios.get(
+      `/api/posts/getpostsbysearchterm/${searchTerm}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user ${searchTerm}:`, error);
+    throw error;
+  }
+};

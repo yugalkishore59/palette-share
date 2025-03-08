@@ -29,7 +29,12 @@ namespace PaletteShare.Server.Services
 
         public async Task<List<User>> GetUsersBySearchTermAsync(string searchTerm)
         {
-            var filter = Builders<User>.Filter.Regex(user => user.Username, new MongoDB.Bson.BsonRegularExpression(searchTerm, "i"));
+            var regex = new MongoDB.Bson.BsonRegularExpression(searchTerm, "i");
+            var filter = Builders<User>.Filter.Or(
+                Builders<User>.Filter.Regex(u => u.Username, regex),
+                Builders<User>.Filter.Regex(u => u.Name, regex),
+                Builders<User>.Filter.Regex(u => u.Email, regex)
+            );
             return await _users.Find(filter).ToListAsync();
         }
 

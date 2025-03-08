@@ -6,4 +6,11 @@ enum NavLablesEnum {
   NONE = "None",
 }
 
-export { NavLablesEnum };
+enum DiscoverFilters {
+  // ALL = "All",
+  POSTS = "Posts",
+  PEOPLE = "People",
+  HASH_TAGS = "#Tags",
+}
+
+export { NavLablesEnum, DiscoverFilters };
