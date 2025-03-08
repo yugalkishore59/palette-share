@@ -36,7 +36,7 @@ export interface PostType {
   profilePictureUrl: string;
   imageUrl?: string;
   tags: string[];
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
   likes: string[];
   comments: CommentType[];

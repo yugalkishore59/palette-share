@@ -67,7 +67,11 @@ const postsSlice = createSlice({
         if (state.page === 1) {
           state.posts = action.payload; // Set posts for initial load
         } else {
-          state.posts = [...state.posts, ...action.payload]; // Append for subsequent loads
+          state.posts = [...state.posts, ...action.payload].filter(
+            (post, index, self) =>
+              index === self.findIndex((p) => p.id === post.id)
+          );
+          // state.posts = [...action.payload, ...state.posts];
         }
         state.loading = false;
         state.error = false;

@@ -164,13 +164,13 @@ export function PostCard({ post, opetionalDeleteFunc }: PostProps) {
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Item
+                {/* <Menu.Item
                   leftSection={
                     <IconEdit style={{ width: rem(14), height: rem(14) }} />
                   }
                 >
                   Edit
-                </Menu.Item>
+                </Menu.Item> */}
 
                 <Menu.Item
                   leftSection={

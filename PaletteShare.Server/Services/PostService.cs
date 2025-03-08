@@ -16,7 +16,8 @@ namespace PaletteShare.Server.Services
         public async Task<List<Post>> GetPostsAsync(int page, int pageSize)
         {
             return await _posts.Find(post => true)
-                               .Skip((page-1) * pageSize)
+                               .SortByDescending(post => post.CreatedAt)
+                               .Skip((page - 1) * pageSize)
                                .Limit(pageSize)
                                .ToListAsync();
         }

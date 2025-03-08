@@ -15,9 +15,10 @@ import { createPost } from "../../utils/api";
 import { PostType } from "../../utils/interfaces";
 import { useAuth0 } from "@auth0/auth0-react";
 import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { PROFILE_PLACEHOLDER } from "../../utils/constants";
+import { fetchPosts, resetPostsSlice } from "../../redux/slices/postSlice";
 
 export function Create() {
   const { isAuthenticated, getIdTokenClaims } = useAuth0();
@@ -26,6 +27,8 @@ export function Create() {
   const [license, setLicense] = useState<string>("None");
   const [imageUrlBase64, setImageUrlBase64] = useState<string>("");
   const { user } = useSelector((state: RootState) => state.user);
+
+  const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     if (isAuthenticated) {
@@ -75,6 +78,8 @@ export function Create() {
         setLicense("None");
         setImageUrlBase64("");
         window.alert("submitted");
+        dispatch(resetPostsSlice()); // Reset state
+        dispatch(fetchPosts(1)); // Fetch fresh data
       } catch (error) {
         console.error("Error fetching token:", error);
       }
