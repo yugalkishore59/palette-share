@@ -70,7 +70,7 @@ export const CreateProfile = () => {
         followers: [],
         following: [],
       };
-      createUser(_user, idToken);
+      await createUser(_user, idToken);
       setImageUrlBase64(PROFILE_PLACEHOLDER);
       setName("");
       setUsername("");
@@ -78,7 +78,8 @@ export const CreateProfile = () => {
       window.alert("created profile");
       window.location.reload();
     } catch (error) {
-      console.error("Error fetching token:", error);
+      console.error("Something went wrong!", error);
+      window.alert("Cannot create profile. Something is not right!");
     }
   };
   return (

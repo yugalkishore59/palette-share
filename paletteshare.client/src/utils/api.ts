@@ -179,3 +179,13 @@ export const getPostsBySearchTerm = async (searchTerm: string) => {
     throw error;
   }
 };
+
+// export const isExplicitContent = async (content: string) => {
+//   try {
+//     const response = await axios.post("/api/gemini/isexplicit", { content });
+//     return response.data.isExplicit;
+//   } catch (error) {
+//     console.error("Error checking explicit content:", error);
+//     throw error;
+//   }
+// };

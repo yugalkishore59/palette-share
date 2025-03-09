@@ -81,7 +81,8 @@ export function Create() {
         dispatch(resetPostsSlice()); // Reset state
         dispatch(fetchPosts(1)); // Fetch fresh data
       } catch (error) {
-        console.error("Error fetching token:", error);
+        console.error("Something went wrong!", error);
+        window.alert("Cannot create post. Something is not right!");
       }
     }
   };

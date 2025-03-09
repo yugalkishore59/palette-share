@@ -112,6 +112,10 @@ export default defineConfig({
         target,
         secure: false,
       },
+      // "^/api/gemini": {
+      //   target,
+      //   secure: false,
+      // },
     },
     port: 5173,
     https: {

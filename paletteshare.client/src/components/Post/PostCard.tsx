@@ -66,35 +66,28 @@ export function PostCard({
   useEffect(() => {
     setIsLiked(post.likes.includes(user?.username ?? ""));
   }, [post, user]);
-  const formatUpdatedAt = (dateString: string): string => {
+  const formatTimeElapsed = (dateString: string): string => {
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid date"; // Handle invalid date input
+
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds}s ago`;
-    }
-
+    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes}m ago`;
-    }
-
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) {
-      return `${diffInHours}h ago`;
-    }
-
+    if (diffInHours < 24) return `${diffInHours}h ago`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) {
-      return "Yesterday";
-    }
+    if (diffInDays === 1) return "Yesterday";
+    if (diffInDays < 7) return `${diffInDays}d ago`;
 
-    if (diffInDays < 7) {
-      return `${diffInDays}d ago`;
-    }
-
-    return date.toLocaleDateString(); // Default format: MM/DD/YYYY
+    // Use localized long format for older dates (e.g., "January 15, 2024")
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   const handleDelete = async () => {
@@ -119,27 +112,26 @@ export function PostCard({
   const handleLike = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
+      return;
     }
     if (user?.username) {
       const postid = post.id ?? "";
       const idTokenClaims = await getIdTokenClaims();
       const idToken = idTokenClaims?.__raw ?? "";
 
-      if (isLiked) {
-        setIsLiked(false);
-        const updatedPost = {
-          ...post,
-          likes: post.likes.filter((like) => like !== user.username),
-        };
+      const updatedLikes = isLiked
+        ? post.likes.filter((like) => like !== user.username) // Unlike
+        : [...post.likes, user.username]; // Like
+
+      const updatedPost = { ...post, likes: updatedLikes };
+
+      try {
         dispatch(updatePostSlice(updatedPost));
         updatePost(postid, updatedPost, idToken);
         optionalUpdatePostFunc?.(updatedPost);
-      } else {
-        setIsLiked(true);
-        const updatedPost = { ...post, likes: [...post.likes, user.username] };
-        dispatch(updatePostSlice(updatedPost));
-        updatePost(postid, updatedPost, idToken);
-        optionalUpdatePostFunc?.(updatedPost);
+        setIsLiked(!isLiked);
+      } catch (error) {
+        console.error("Failed to update like:", error);
       }
     }
   };
@@ -149,28 +141,39 @@ export function PostCard({
       setComment("");
       return;
     }
+
     if (!isAuthenticated) {
       loginWithRedirect();
+      return;
     }
-    if (user?.username) {
-      const postid = post.id ?? "";
-      const idTokenClaims = await getIdTokenClaims();
-      const idToken = idTokenClaims?.__raw ?? "";
 
-      const newComment: CommentType = {
-        id: uuidv4(),
-        userId: user.id ?? "",
-        username: user.username,
-        content: comment,
-        createdAt: new Date().toISOString(),
-      };
+    if (!user?.username) return;
 
-      const updatedPost = { ...post, comments: [...post.comments, newComment] };
+    const postid = post.id ?? "";
+    const idTokenClaims = await getIdTokenClaims();
+    const idToken = idTokenClaims?.__raw ?? "";
+
+    const newComment: CommentType = {
+      id: uuidv4(),
+      userId: user.id ?? "",
+      username: user.username,
+      content: comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedPost = { ...post, comments: [...post.comments, newComment] };
+
+    try {
       dispatch(updatePostSlice(updatedPost));
-      updatePost(postid, updatedPost, idToken);
       optionalUpdatePostFunc?.(updatedPost);
+      await updatePost(postid, updatedPost, idToken);
 
-      setComment("");
+      setComment(""); // Clear input after successful update
+    } catch (error) {
+      dispatch(updatePostSlice(post)); // Restore old state
+      optionalUpdatePostFunc?.(post);
+      console.error("Failed to update comment:", error);
+      window.alert("Failed to update comment. Something is not right!");
     }
   };
 
@@ -214,7 +217,7 @@ export function PostCard({
                   </Text>
 
                   <Text c="dimmed" size="xs">
-                    {post.username} • {formatUpdatedAt(post.updatedAt || "")}
+                    {post.username} • {formatTimeElapsed(post.createdAt || "")}
                   </Text>
                 </div>
 
@@ -387,7 +390,7 @@ export function PostCard({
                                 {comment.username}
                               </Text>
                               <Text c="dimmed" size="xs">
-                                {formatUpdatedAt(comment.createdAt || "")}
+                                {formatTimeElapsed(comment.createdAt || "")}
                               </Text>
                             </div>
                           </Group>

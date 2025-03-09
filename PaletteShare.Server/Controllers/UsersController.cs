@@ -9,17 +9,20 @@ namespace PaletteShare.Server.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private readonly UserService _userService;
+        private readonly UserService userService;
 
-        public UsersController(UserService userService)
+        private readonly GeminiService geminiService;
+
+        public UsersController(UserService userService, GeminiService geminiService)
         {
-            _userService = userService;
+            this.userService = userService;
+            this.geminiService = geminiService;
         }
 
         [HttpGet("getuser/{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
-            var user = await _userService.GetUserAsync(id);
+            var user = await this.userService.GetUserAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -32,7 +35,7 @@ namespace PaletteShare.Server.Controllers
         {
             try
             {
-                var user = await _userService.GetUserByEmailAsync(email);
+                var user = await this.userService.GetUserByEmailAsync(email);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -46,7 +49,7 @@ namespace PaletteShare.Server.Controllers
         {
             try
             {
-                var user = await _userService.GetUserByUsernameAsync(username);
+                var user = await this.userService.GetUserByUsernameAsync(username);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -62,10 +65,18 @@ namespace PaletteShare.Server.Controllers
             try
             {
                 // Set additional properties before saving if needed
-                user.CreatedAt = DateTime.UtcNow;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.CreatedAt = user.UpdatedAt = DateTime.UtcNow;
+                string content = (user.Name ?? "") + " " + (user.Username ?? "") + " " + (user.Bio ?? "");
 
-                await _userService.CreateUserAsync(user);
+
+                bool isExplicit = await geminiService.ContainsExplicitContent(content);
+
+                if (isExplicit)
+                {
+                    return BadRequest("Post contains explicit content.");
+                }
+
+                await this.userService.CreateUserAsync(user);
 
                 // Return a 201 Created response with the newly created post
                 return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
@@ -80,25 +91,43 @@ namespace PaletteShare.Server.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUser(string id, User updatedUser)
         {
-            var existingUser = await _userService.GetUserAsync(id);
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
-
             try
             {
+                var existingUser = await this.userService.GetUserAsync(id);
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                // Check if Name, bio, or username have changed and check for explicit content
+                bool hasNameChanged = existingUser.Name != updatedUser.Name;
+                bool hasBioChanged = existingUser.Bio != updatedUser.Bio;
+                bool hasUsernameChanged = existingUser.Username != updatedUser.Username;
+
+                if (hasNameChanged || hasBioChanged || hasUsernameChanged)
+                {
+                    string content = (updatedUser.Name ?? "") + " " + (updatedUser.Username ?? "") + " " + (updatedUser.Bio ?? "");
+
+
+                    bool isExplicit = await geminiService.ContainsExplicitContent(content);
+
+                    if (isExplicit)
+                    {
+                        return BadRequest("Post contains explicit content.");
+                    }
+                }
+
                 // Update properties of existingUser with updatedUser
-                existingUser.Name = updatedUser.Name;
+                existingUser.Name = updatedUser.Name ?? "";
                 existingUser.ProfilePictureUrl = updatedUser.ProfilePictureUrl;
                 existingUser.CoverPhotoUrl = updatedUser.CoverPhotoUrl;
-                existingUser.Bio = updatedUser.Bio;
+                existingUser.Bio = updatedUser.Bio ?? "";
                 existingUser.Website = updatedUser.Website;
                 existingUser.SocialLinks = updatedUser.SocialLinks;
                 existingUser.Following = updatedUser.Following;
                 existingUser.Followers = updatedUser.Followers;
 
-                await _userService.UpdateUserAsync(id, existingUser);
+                await this.userService.UpdateUserAsync(id, existingUser);
 
                 return NoContent(); // 204 No Content
             }
@@ -113,7 +142,7 @@ namespace PaletteShare.Server.Controllers
         {
             try
             {
-                var users = await _userService.GetUsersBySearchTermAsync(searchTerm);
+                var users = await this.userService.GetUsersBySearchTermAsync(searchTerm);
                 return Ok(users);
             }
             catch (Exception ex)

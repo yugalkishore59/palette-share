@@ -36,7 +36,7 @@ namespace PaletteShare.Server.Services
             await _posts.Find(post => post.Id == id).FirstOrDefaultAsync();
 
         public async Task<List<Post>> GetPostsByUsernameAsync(string username) =>
-            await _posts.Find(post => post.Username == username).ToListAsync();
+            await _posts.Find(post => post.Username == username).SortByDescending(post => post.CreatedAt).ToListAsync();
 
         public async Task CreatePostAsync(Post post) =>
             await _posts.InsertOneAsync(post);

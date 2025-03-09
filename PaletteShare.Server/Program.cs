@@ -1,4 +1,6 @@
+using DotnetGeminiSDK;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -19,6 +21,15 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(s =>
 });
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<PostService>();
+
+// Gemini service
+builder.Services.AddGeminiClient(config =>
+{
+    config.ApiKey = builder.Configuration["Gemini:ApiKey"] ?? "";
+    config.ImageBaseUrl = builder.Configuration["Gemini:ImageBaseUrl"] ?? "";
+    config.TextBaseUrl = builder.Configuration["Gemini:TextBaseUrl"] ?? "";
+});
+builder.Services.AddSingleton<GeminiService>();
 
 
 // Add JWT authentication
