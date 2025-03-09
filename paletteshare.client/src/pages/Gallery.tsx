@@ -3,12 +3,12 @@ import type { RootState } from "../redux/store";
 import { useEffect, useRef, useState } from "react";
 import { incrementPageSlice } from "../redux/slices/postSlice";
 import { fetchPosts } from "../redux/slices/postSlice";
-import { Container, Skeleton, Stack } from "@mantine/core";
+import { Container, Stack } from "@mantine/core";
 
 import { PostCard } from "../components/Post/PostCard";
 import { SCROLL_THRESHOLD } from "../utils/constants";
 import { GalleryProps } from "../utils/interfaces";
-import classes from "./Gallery.module.css";
+import PostSkeleton from "../components/Loader/PostSkeleton";
 
 export const Gallery = ({ scrollableRef }: GalleryProps) => {
   const dispatch = useDispatch();
@@ -61,21 +61,7 @@ export const Gallery = ({ scrollableRef }: GalleryProps) => {
       <Stack>
         {posts.length > 0 &&
           posts.map((post, index) => <PostCard key={index} post={post} />)}
-        {posts.length === 0 && (
-          <Container size="sm" pt="xs" pb="xs" pl={"0"} pr={"0"} w="100%">
-            <Skeleton height={50} circle />
-            <Skeleton height={200} mt={12} />
-            <Skeleton height={12} mt={6} radius="xl" />
-            <Skeleton height={12} mt={6} radius="xl" />
-            <Skeleton height={12} mt={6} radius="xl" />
-            <Skeleton height={12} mt={6} radius="xl" />
-            <Skeleton height={12} mt={6} width="70%" radius="xl" />
-            <div className={classes.rowFlex}>
-              <Skeleton height={30} w={30} />
-              <Skeleton height={30} w={30} />
-            </div>
-          </Container>
-        )}
+        {posts.length === 0 && <PostSkeleton />}
       </Stack>
     </Container>
   );

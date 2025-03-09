@@ -23,6 +23,7 @@ import { COVER_PLACEHOLDER, PROFILE_PLACEHOLDER } from "../../utils/constants";
 import { formatNumber } from "../../utils/functions";
 import { useAuth0 } from "@auth0/auth0-react";
 import { setUser } from "../../redux/slices/userSlice";
+import PostSkeleton from "../../components/Loader/PostSkeleton";
 
 interface userStatsType {
   value: string;
@@ -240,6 +241,7 @@ export const Profile = () => {
         )}
       </Card>
       <Stack>
+        {posts.length === 0 && <PostSkeleton />}
         {posts.length > 0 &&
           posts.map((post, index) => (
             <PostCard

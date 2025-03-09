@@ -7,7 +7,7 @@ enum NavLablesEnum {
 }
 
 enum DiscoverFilters {
-  // ALL = "All",
+  ALL = "All",
   POSTS = "Posts",
   PEOPLE = "People",
   HASH_TAGS = "#Tags",

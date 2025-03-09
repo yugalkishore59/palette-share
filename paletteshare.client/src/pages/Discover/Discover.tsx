@@ -3,6 +3,7 @@ import { SingInFirst } from "../../components/SignInFirst/SingInFirst";
 import {
   ActionIcon,
   Avatar,
+  Button,
   Container,
   Group,
   Loader,
@@ -34,7 +35,7 @@ export const Discover = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResultUsers, setSearchResultUsers] = useState<UserType[]>([]);
   const [searchResultPosts, setSearchResultPosts] = useState<PostType[]>([]);
-  const [filter, setFilter] = useState<DiscoverFilters>(DiscoverFilters.POSTS);
+  const [filter, setFilter] = useState<DiscoverFilters>(DiscoverFilters.ALL);
   const [isLoading, setIsLoading] = useState(false);
   //const [searchResultsPosts, setSearchResultsPosts] = useState<PostType[]>([]);
   //const [searchResultsHashTags, setSearchResultsHashTags] = useState([]);
@@ -114,6 +115,74 @@ export const Discover = () => {
           />
           <GradientSegmentedControl filter={filter} setFilter={setFilter} />
           {isLoading && <Loader m={"xl"} />}
+          {filter === DiscoverFilters.ALL && (
+            <>
+              {searchResultUsers.length === 0 &&
+                searchResultPosts.length === 0 && (
+                  <>{!isLoading && <>Hmm… nothing here.</>}</>
+                )}
+              {searchResultUsers.length > 0 && (
+                <div className={classes.userContainer}>
+                  {searchResultUsers.slice(0, 5).map((user, index) => (
+                    <Group justify="space-between" key={index}>
+                      <Link
+                        to={`/profile/${user.username}`}
+                        className={classes.userProfileLink}
+                      >
+                        <UnstyledButton className={classes.user}>
+                          <Group>
+                            <Avatar src={user.profilePictureUrl} radius="xl" />
+
+                            <div style={{ flex: 1 }}>
+                              <Text size="sm" fw={500}>
+                                {user.name}
+                              </Text>
+                              <Text c="dimmed" size="xs">
+                                {user.username}
+                              </Text>
+                            </div>
+
+                            <IconChevronRight
+                              style={{ width: rem(14), height: rem(14) }}
+                              stroke={1.5}
+                            />
+                          </Group>
+                        </UnstyledButton>
+                      </Link>
+                    </Group>
+                  ))}
+                  <Button
+                    variant="subtle"
+                    size="xs"
+                    onClick={() => setFilter(DiscoverFilters.PEOPLE)}
+                  >
+                    See more people
+                  </Button>
+                </div>
+              )}
+
+              {searchResultPosts.length > 0 && (
+                <Stack w={"100%"}>
+                  {searchResultPosts.slice(0, 5).map((post, index) => (
+                    <PostCard
+                      key={index}
+                      post={post}
+                      opetionalDeleteFunc={opetionalDeleteFunc}
+                      optionalUpdatePostFunc={optionalUpdatePostFunc}
+                    />
+                  ))}
+                  <Button
+                    variant="subtle"
+                    size="xs"
+                    mb={"lg"}
+                    onClick={() => setFilter(DiscoverFilters.POSTS)}
+                  >
+                    See more posts
+                  </Button>
+                </Stack>
+              )}
+            </>
+          )}
           {(filter === DiscoverFilters.POSTS ||
             filter === DiscoverFilters.HASH_TAGS) && (
             <>
