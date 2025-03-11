@@ -15,13 +15,16 @@ const theme = createTheme({
   fontFamily: "Verdana, sans-serif",
 });
 
+const auth_domain = import.meta.env.VITE_AUTH_DOMAIN || "";
+const auth_client_id = import.meta.env.VITE_AUTH_CLIENT_ID || "";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
       <Provider store={store}>
         <Auth0Provider
-          domain="***REMOVED***"
-          clientId="***REMOVED***"
+          domain={auth_domain}
+          clientId={auth_client_id}
           authorizationParams={{
             // redirect_uri: "https://localhost:5173",
             redirect_uri: window.location.origin,
