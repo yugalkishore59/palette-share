@@ -1,4 +1,4 @@
-# PaletteShare
+![Screenshot 2025-03-11 214734](https://github.com/user-attachments/assets/247b6cb4-b671-482f-ab7c-b67c6c3d48e7)# PaletteShare
 
 PaletteShare is a modern social media platform designed for artists and designers to share, discover, and interact with artwork. Built with a robust **.NET Core** backend and a dynamic **React** frontend, PaletteShare fosters a secure and engaging environment for creative expression.
 
@@ -132,6 +132,9 @@ Frontend will automatically start along.
 🔗 **Live Platform:** [PaletteShare](https://app-paletteshare-dev.azurewebsites.net/)
 
 ### **Screenshots**
+![Screenshot 2025-03-11 214734](https://github.com/user-attachments/assets/66d110da-1d72-4eda-9f5e-85dde4b0c37d)
+
+![Screenshot 2025-03-11 214942](https://github.com/user-attachments/assets/491c0275-92ed-463e-b17e-dec196939a09)
 
 ## Contributing
 
