@@ -7,7 +7,7 @@ PaletteShare is a modern social media platform designed for artists and designer
 ### **Creative Content Sharing**
 
 - Upload and showcase artwork
-- Add descriptions, tags
+- Add descriptions and tags
 - Engage with other artists through comments and likes
 
 ### **Content Discovery & Social Interactions**
@@ -89,7 +89,7 @@ Ensure you have the following installed:
 - Configure **Auth0 credentials** in `main.tsx`
 - Set up **API endpoints** in environment variables
 
-### 🔨 **Installation & Running the Project**
+### **Installation & Running the Project**
 
 ```sh
 cd PaletteShare.Server
@@ -99,31 +99,39 @@ cd PaletteShare.Server
 
 Frontend will automatically start along.
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### **Posts**
 
 - `POST /api/Posts/createpost` → Create a new post
 - `GET /api/Posts/getposts` → Retrieve posts (paginated)
 - `PUT /api/Posts/updatepost/{id}` → Update an existing post
-- `GET getpostsbyusername/{username}` → Retrieve posts by username
-- `DELETE deletepost/{id}` → Delete a post
-- `GET getpostsbysearchterm/{searchTerm}` → Search and get posts by search term
+- `GET /api/Posts/getpostsbyusername/{username}` → Retrieve posts by username
+- `DELETE /api/Posts/deletepost/{id}` → Delete a post
+- `GET /api/Posts/getpostsbysearchterm/{searchTerm}` → Search and get posts by search term
 
 ### **User Profiles**
 
 - `GET /api/Users/getuser/{id}` → Retrieve user profile
-- `GET getuserbyemail/{email}` → Retrieve user profile by email
-- `GET getuserbyusername/{username}` → Retrieve user profile by username
-- `POST createuser` → Create a new user profile
-- `PUT updateuser/{id}` → Update user profile
-- `GET getusersbysearchterm/{searchTerm}` → Search and get user profiles by search term
+- `GET /api/Users/getuserbyemail/{email}` → Retrieve user profile by email
+- `GET /api/Users/getuserbyusername/{username}` → Retrieve user profile by username
+- `POST /api/Users/createuser` → Create a new user profile
+- `PUT /api/Users/updateuser/{id}` → Update user profile
+- `GET /api/Users/getusersbysearchterm/{searchTerm}` → Search and get user profiles by search term
 
 ### **Content Moderation**
 
 - `POST /api/Gemini/isexplicit` → Check if content is explicit
 
----
+## Screenshots & Live Demo
+
+### **Try PaletteShare Live!**
+
+**Experience PaletteShare in action!** Connect with artists, explore creative posts, and share your own artwork.
+
+🔗 **Live Platform:** [PaletteShare](https://app-paletteshare-dev.azurewebsites.net/)
+
+### **Screenshots**
 
 ## Contributing
 
